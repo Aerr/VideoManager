@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package listing;
 
 import elements.ButtonHolder;
@@ -9,13 +14,43 @@ import java.util.HashMap;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import misc.Tuple;
+import misc.Utils;
+import static misc.Utils.getPrefix;
 
+/**
+ *
+ * @author aerr
+ */
 public class FileWalker
 {
 
-  private static final HashMap<String, ArrayList<CButton>> setButtons = new HashMap();
+  private final HashMap<String, ArrayList<CButton>> setButtons;
 
-  public static ArrayList<CButton> getFiles(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot)
+  private FileWalker()
+  {
+    setButtons = new HashMap();
+  }
+
+  public static FileWalker getInstance()
+  {
+    return FileWalkerHolder.INSTANCE;
+  }
+
+  /**
+   * @return the setButtons
+   */
+  public HashMap<String, ArrayList<CButton>> getSetButtons()
+  {
+    return setButtons;
+  }
+
+  private static class FileWalkerHolder
+  {
+
+    private static final FileWalker INSTANCE = new FileWalker();
+  }
+
+  public ArrayList<CButton> getFiles(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot)
   {
     setButtons.put("root", new ArrayList<CButton>());
     new File("thumbs").mkdirs();
@@ -23,7 +58,7 @@ public class FileWalker
     return setButtons.get("root");
   }
 
-  private static void walk(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot, ArrayList<CButton> buttonsList)
+  private void walk(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot, ArrayList<CButton> buttonsList)
   {
     File rootFolder = new File(path);
     File[] list = rootFolder.listFiles();
@@ -49,9 +84,9 @@ public class FileWalker
         final DefaultMutableTreeNode node = new DefaultMutableTreeNode(new Tuple(file, f.getAbsolutePath()));
         treeRoot.add(node);
         setButtons.put(file, new ArrayList<CButton>());
-        walk(f.getAbsolutePath(), jPanel, node, setButtons.get("file"));
+        walk(f.getAbsolutePath(), jPanel, node, setButtons.get(file));
       }
-      else if (fileToString.endsWith(".mkv") || fileToString.endsWith(".mp4"))
+      else if (fileToString.endsWith(".mkv") || fileToString.endsWith(".mp4") || fileToString.endsWith(".avi"))
       {
         final CButton cButton = new CButton(new MediaElement(file, fileToString,
                                                              (String) rootToTuple(treeRoot).y, false));
@@ -64,24 +99,14 @@ public class FileWalker
     }
   }
 
-  private static Tuple rootToTuple(DefaultMutableTreeNode treeRoot)
+  private Tuple rootToTuple(DefaultMutableTreeNode treeRoot)
   {
     return (Tuple) treeRoot.getUserObject();
   }
 
-  public static String getPrefix(String src, String... delimiter)
+  private String getSuffix(String src, String... delimiter)
   {
-    int i = findIndex(src, delimiter);
-
-    if (i == -1)
-      return src;
-    else
-      return src.substring(0, i);
-  }
-
-  private static String getSuffix(String src, String... delimiter)
-  {
-    int i = findIndex(src, delimiter);
+    int i = Utils.findIndex(src, delimiter);
 
     if (i == -1)
       return src;
@@ -89,23 +114,4 @@ public class FileWalker
       return src.substring(i + 1);
   }
 
-  private static int findIndex(String src, String... delimiter)
-  {
-    int i = -1;
-    for (String s : delimiter)
-    {
-      int lastIndexOf = src.toUpperCase().lastIndexOf(s.toUpperCase());
-      if ((lastIndexOf > 0) && (lastIndexOf < (src.length() - 1)))
-        i = (i == -1) ? lastIndexOf : Math.min(i, lastIndexOf);
-    }
-    return i;
-  }
-
-  /**
-   * @return the setButtons
-   */
-  public static HashMap<String, ArrayList<CButton>> getSetButtons()
-  {
-    return setButtons;
-  }
 }

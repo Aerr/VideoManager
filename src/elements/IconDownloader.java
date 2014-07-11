@@ -8,12 +8,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
-import listing.FileWalker;
+import misc.Utils;
 
 public class IconDownloader extends SwingWorker<Void, Void>
 {
 
-  private CButton button;
+  private final CButton button;
   private String resultURL;
 
   public IconDownloader(CButton button)
@@ -36,7 +36,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
     StringBuilder res = new StringBuilder();
     try
     {
-      String name = FileWalker.getPrefix(button.getText(), "E0", "E1", "E2");
+      String name = Utils.getPrefix(button.getText(), "E0", "E1", "E2");
       URL url = new URL("https://www.bing.com/images/search?q=" + name.replace(' ', '+')
                         + "+poster");
 

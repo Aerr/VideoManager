@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -15,13 +16,13 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import listing.FileWalker;
+import misc.Utils;
 
 public final class Gui extends JFrame
 {
 
   private static final long serialVersionUID = 1L;
   private JPanel jPanel;
-  private ArrayList<CButton> holdersList;
 
   private static class GuiHolder
   {
@@ -49,6 +50,10 @@ public final class Gui extends JFrame
     jPanel = new JPanel();
     jPanel.setBackground(new Color(39, 39, 39));
     final GridLayout gridLayout = new GridLayout(0, 4);
+    gridLayout.setVgap(Utils.GUI_VGAP);
+    gridLayout.setHgap(Utils.GUI_HGAP);
+    jPanel.setBorder(BorderFactory.createEmptyBorder(Utils.GUI_INSET, Utils.GUI_INSET / 2,
+                                                     Utils.GUI_INSET, Utils.GUI_INSET / 2));
     jPanel.setLayout(gridLayout);
 
     addComponentListener(new MainComponentListener(this, gridLayout));
@@ -70,13 +75,13 @@ public final class Gui extends JFrame
       @Override
       public void caretUpdate(CaretEvent arg0)
       {
-        jPanel.removeAll();
-
-        for (CButton c : holdersList)
-          if (jTextField.getText().equals("") || c.toString().contains(jTextField.getText()))
-            jPanel.add(c);
-
-        jPanel.revalidate();
+//        jPanel.removeAll();
+//
+//        for (CButton c : holdersList)
+//          if (jTextField.getText().equals("") || c.toString().contains(jTextField.getText()))
+//            jPanel.add(c);
+//
+//        jPanel.revalidate();
       }
     });
     jMenuBar.add(jTextField);
@@ -85,7 +90,8 @@ public final class Gui extends JFrame
 
     JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
 
-    populateList("/home/aerr/Téléchargements");
+    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements", jPanel,
+                                      TreeExplorer.getInstance().getExplorerRoot());
 
     jScrollPane1.setViewportView(TreeExplorer.getInstance());
 
@@ -96,12 +102,19 @@ public final class Gui extends JFrame
     setVisible(true);
   }
 
-  public void populateList(String path)
+  public void populateList(String folder)
   {
+    final ArrayList<CButton> files = FileWalker.getInstance().getSetButtons().get(folder);
+    if (files == null)
+      return;
+
     jPanel.removeAll();
-    holdersList = FileWalker.getFiles(path, jPanel, TreeExplorer.getInstance().getExplorerRoot());
+
+    for (CButton cButton : files)
+      jPanel.add(cButton);
 
     revalidate();
     repaint();
+    System.out.println(jPanel.getComponent(0).getSize());
   }
 }

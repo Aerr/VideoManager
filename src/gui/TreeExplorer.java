@@ -17,6 +17,7 @@ import misc.Tuple;
  */
 public class TreeExplorer extends JTree
 {
+
   private final DefaultMutableTreeNode explorerRoot;
 
   private TreeExplorer()
@@ -53,6 +54,7 @@ public class TreeExplorer extends JTree
 
   private class TreeExplorerMouseListener extends MouseAdapter
   {
+
     private final TreeExplorer parent;
 
     public TreeExplorerMouseListener(TreeExplorer parent)
@@ -65,9 +67,7 @@ public class TreeExplorer extends JTree
     {
       super.mouseClicked(e);
       if (e.getClickCount() == 2)
-      {
-        System.out.println(parent.getLastSelectedPathComponent());
-      }
+        Gui.getInstance().populateList(parent.getLastSelectedPathComponent().toString());
     }
 
   }

@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
+import misc.Utils;
 
 public class CButton extends JButton
 {
@@ -23,17 +24,15 @@ public class CButton extends JButton
     super(element.getName());
     this.element = element;
 
-    Dimension dimension = new Dimension(125, 200);
-
     setForeground(Color.white);
     setBackground(null);
     setBorder(null);
 
     setVerticalTextPosition(SwingConstants.BOTTOM);
     setHorizontalTextPosition(SwingConstants.CENTER);
-    setPreferredSize(dimension);
-    setMaximumSize(dimension);
-    setMinimumSize(dimension);
+    setPreferredSize(Utils.ICON_DIMENSION);
+    setMaximumSize(Utils.ICON_DIMENSION);
+    setMinimumSize(Utils.ICON_DIMENSION);
     setToolTipText(element.getName());
 
     new IconDownloader(this).execute();

@@ -26,6 +26,7 @@ public class FileListListener extends MouseAdapter
     if (e.getButton() == MouseEvent.BUTTON1)
     {
       String name = item.getPath();
+      System.out.println(item.getSize());
       try
       {
         Desktop.getDesktop().open(new File(name));

@@ -4,6 +4,7 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import misc.Utils;
 
 class MainComponentListener implements ComponentListener
 {
@@ -25,7 +26,15 @@ class MainComponentListener implements ComponentListener
   @Override
   public void componentResized(ComponentEvent e)
   {
-    gridLayout.setColumns(parent.getSize().width / 150);
+    final int width = parent.getSize().width;
+    if (width < 463)
+      gridLayout.setColumns(1);
+    else
+    {
+      int newColumns = (width) / (Utils.ICON_DIMENSION.width + 25);
+      newColumns = (width - Utils.GUI_HGAP * (newColumns - 1) * 2) / (Utils.ICON_DIMENSION.width + 25);
+      gridLayout.setColumns(newColumns);
+    }
   }
 
   @Override
