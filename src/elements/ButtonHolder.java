@@ -1,6 +1,7 @@
 package elements;
 
 import javax.swing.JPanel;
+import misc.Utils;
 
 public class ButtonHolder extends JPanel
 {
@@ -8,14 +9,19 @@ public class ButtonHolder extends JPanel
   private static final long serialVersionUID = 1L;
   private final CButton cButton;
 
+  public ButtonHolder()
+  {
+    this(null);
+  }
+
   public ButtonHolder(CButton cButton)
   {
     setBackground(null);
 
-//    this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-
+    setPreferredSize(Utils.ICON_DIMENSION);
     this.cButton = cButton;
-    add(this.cButton);
+    if (this.cButton != null)
+      add(this.cButton);
   }
 
   @Override

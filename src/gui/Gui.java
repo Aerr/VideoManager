@@ -1,5 +1,6 @@
 package gui;
 
+import elements.ButtonHolder;
 import elements.CButton;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,7 +23,8 @@ public final class Gui extends JFrame
 {
 
   private static final long serialVersionUID = 1L;
-  private JPanel jPanel;
+  private String currentFolder;
+  private final JPanel jPanel;
 
   private static class GuiHolder
   {
@@ -90,7 +92,7 @@ public final class Gui extends JFrame
 
     JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
 
-    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements", jPanel,
+    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/", jPanel,
                                       TreeExplorer.getInstance().getExplorerRoot());
 
     jScrollPane1.setViewportView(TreeExplorer.getInstance());
@@ -98,12 +100,16 @@ public final class Gui extends JFrame
     jSplitPane.setLeftComponent(jScrollPane1);
 
     add(jSplitPane);
+    currentFolder = "All";
     pack();
     setVisible(true);
   }
 
   public void populateList(String folder)
   {
+    if (currentFolder.equals(folder))
+      return;
+
     final ArrayList<CButton> files = FileWalker.getInstance().getSetButtons().get(folder);
     if (files == null)
       return;
@@ -111,10 +117,19 @@ public final class Gui extends JFrame
     jPanel.removeAll();
 
     for (CButton cButton : files)
-      jPanel.add(cButton);
+      jPanel.add(new ButtonHolder(cButton));
 
     revalidate();
+
+    final int columns = ((GridLayout) jPanel.getLayout()).getColumns();
+    while (jPanel.getComponent(0).getSize().height > Utils.ICON_DIMENSION.height)
+    {
+      for (int i = 0; i < columns; i++)
+        jPanel.add(new ButtonHolder());
+      revalidate();
+    }
+
     repaint();
-    System.out.println(jPanel.getComponent(0).getSize());
+    currentFolder = folder;
   }
 }

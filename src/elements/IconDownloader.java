@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
-import misc.Utils;
 
 public class IconDownloader extends SwingWorker<Void, Void>
 {
@@ -36,9 +35,9 @@ public class IconDownloader extends SwingWorker<Void, Void>
     StringBuilder res = new StringBuilder();
     try
     {
-      String name = Utils.getPrefix(button.getText(), "E0", "E1", "E2");
-      URL url = new URL("https://www.bing.com/images/search?q=" + name.replace(' ', '+')
-                        + "+poster");
+      String search = button.getParentFolder() + "+" + button.getText() + "+poster";
+      System.out.println(("https://www.bing.com/images/search?q=" + search.replace(" ", "+")));
+      URL url = new URL("https://www.bing.com/images/search?q=" + search.replace(" ", "+"));
 
       is = url.openStream();
       BufferedReader br = new BufferedReader(new InputStreamReader(is));

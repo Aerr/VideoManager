@@ -92,6 +92,11 @@ public class CButton extends JButton
     return this.element.getPath();
   }
 
+  public String getParentFolder()
+  {
+    return this.element.getParentFolder();
+  }
+
   @Override
   public String toString()
   {

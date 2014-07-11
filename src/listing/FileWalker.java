@@ -52,10 +52,10 @@ public class FileWalker
 
   public ArrayList<CButton> getFiles(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot)
   {
-    setButtons.put("root", new ArrayList<CButton>());
+    setButtons.put("All", new ArrayList<CButton>());
     new File("thumbs").mkdirs();
     walk(path, jPanel, treeRoot, null);
-    return setButtons.get("root");
+    return setButtons.get("All");
   }
 
   private void walk(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot, ArrayList<CButton> buttonsList)
@@ -72,11 +72,7 @@ public class FileWalker
     for (File f : list)
     {
       final String fileToString = f.getAbsoluteFile().toString();
-      String file = fileToString;
-
-      file = getSuffix(file, fileSeparator);
-      file = getPrefix(file, Utils.DUMP_KEYWORDS);
-      file = file.replace('.', ' ').trim();
+      String file = getCleanName(fileToString, fileSeparator);
 
       if (f.isDirectory())
       {
@@ -87,14 +83,27 @@ public class FileWalker
       }
       else if ((file = isVideo(fileToString, file, Utils.EXTENSIONS)) != null)
       {
-        final CButton cButton = new CButton(new MediaElement(file.trim(), fileToString,
-                                                             (String) rootToTuple(treeRoot).y, false));
+        final CButton cButton = new CButton(
+                new MediaElement(file.trim(), fileToString,
+                                 getCleanName((String) rootToTuple(treeRoot).y, fileSeparator),
+                                 false));
+
         jPanel.add(new ButtonHolder(cButton));
         if (buttonsList != null)
           buttonsList.add(cButton);
-        setButtons.get("root").add(cButton);
+        setButtons.get("All").add(cButton);
       }
     }
+  }
+
+  private String getCleanName(final String fileToString, String fileSeparator)
+  {
+    if (fileToString == null)
+      return null;
+    String file = getSuffix(fileToString, fileSeparator);
+    file = getPrefix(file, Utils.DUMP_KEYWORDS);
+    file = file.replace('.', ' ').trim();
+    return file;
   }
 
   private Tuple rootToTuple(DefaultMutableTreeNode treeRoot)

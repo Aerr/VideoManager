@@ -24,6 +24,7 @@ public class TreeExplorer extends JTree
   {
     javax.swing.tree.DefaultMutableTreeNode treeRoot = new javax.swing.tree.DefaultMutableTreeNode("root");
     explorerRoot = new javax.swing.tree.DefaultMutableTreeNode(new Tuple("Explorer"));
+    explorerRoot.add(new javax.swing.tree.DefaultMutableTreeNode(new Tuple("All")));
     treeRoot.add(explorerRoot);
     treeRoot.add(new javax.swing.tree.DefaultMutableTreeNode(new Tuple("Settings")));
 
@@ -66,7 +67,7 @@ public class TreeExplorer extends JTree
     public void mouseClicked(MouseEvent e)
     {
       super.mouseClicked(e);
-      if (e.getClickCount() == 2)
+      if (e.getClickCount() == 1)
         Gui.getInstance().populateList(parent.getLastSelectedPathComponent().toString());
     }
 

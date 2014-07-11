@@ -61,4 +61,12 @@ public class MediaElement
     return name;
   }
 
+  /**
+   * @return the parentFolder
+   */
+  public String getParentFolder()
+  {
+    return parentFolder;
+  }
+
 }

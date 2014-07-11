@@ -11,7 +11,7 @@ import listing.Prefs;
 public class FileListListener extends MouseAdapter
 {
 
-  private CButton item;
+  private final CButton item;
 
   public FileListListener(CButton cButton)
   {
@@ -26,7 +26,6 @@ public class FileListListener extends MouseAdapter
     if (e.getButton() == MouseEvent.BUTTON1)
     {
       String name = item.getPath();
-      System.out.println(item.getSize());
       try
       {
         Desktop.getDesktop().open(new File(name));
