@@ -36,7 +36,6 @@ public class IconDownloader extends SwingWorker<Void, Void>
     try
     {
       String search = button.getParentFolder() + "+" + button.getText() + "+poster";
-      System.out.println(("https://www.bing.com/images/search?q=" + search.replace(" ", "+")));
       URL url = new URL("https://www.bing.com/images/search?q=" + search.replace(" ", "+"));
 
       is = url.openStream();

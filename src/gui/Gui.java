@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -77,13 +78,19 @@ public final class Gui extends JFrame
       @Override
       public void caretUpdate(CaretEvent arg0)
       {
-//        jPanel.removeAll();
-//
-//        for (CButton c : holdersList)
-//          if (jTextField.getText().equals("") || c.toString().contains(jTextField.getText()))
-//            jPanel.add(c);
-//
-//        jPanel.revalidate();
+        ArrayList<CButton> get = FileWalker.getInstance().getSetButtons().get(currentFolder);
+        if (jTextField.getText().equals(""))
+          populateList(get);
+
+        get = new ArrayList(get);
+        for (Iterator<CButton> it = get.iterator(); it.hasNext();)
+        {
+          CButton cButton = it.next();
+          if (!cButton.toString().contains(jTextField.getText()))
+            it.remove();
+        }
+
+        populateList(get);
       }
     });
     jMenuBar.add(jTextField);
@@ -114,6 +121,12 @@ public final class Gui extends JFrame
     if (files == null)
       return;
 
+    populateList(files);
+    currentFolder = folder;
+  }
+
+  private void populateList(final ArrayList<CButton> files)
+  {
     jPanel.removeAll();
 
     for (CButton cButton : files)
@@ -122,14 +135,14 @@ public final class Gui extends JFrame
     revalidate();
 
     final int columns = ((GridLayout) jPanel.getLayout()).getColumns();
-    while (jPanel.getComponent(0).getSize().height > Utils.ICON_DIMENSION.height)
-    {
-      for (int i = 0; i < columns; i++)
-        jPanel.add(new ButtonHolder());
-      revalidate();
-    }
+    if (jPanel.getComponentCount() > 0)
+      while (jPanel.getComponent(0).getSize().height > Utils.ICON_DIMENSION.height)
+      {
+        for (int i = 0; i < columns; i++)
+          jPanel.add(new ButtonHolder());
+        revalidate();
+      }
 
     repaint();
-    currentFolder = folder;
   }
 }
