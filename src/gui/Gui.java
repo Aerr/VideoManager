@@ -5,8 +5,11 @@ import elements.CButton;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.zip.GZIPOutputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -107,9 +110,26 @@ public final class Gui extends JFrame
     jSplitPane.setLeftComponent(jScrollPane1);
 
     add(jSplitPane);
+
     currentFolder = "All";
     pack();
     setVisible(true);
+  }
+
+  private void save_database()
+  {
+    try
+    {
+      FileOutputStream fos = new FileOutputStream("database");
+      GZIPOutputStream gzos = new GZIPOutputStream(fos);
+      try (ObjectOutputStream oos = new ObjectOutputStream(gzos))
+      {
+        oos.writeObject(FileWalker.getInstance().getSetButtons());
+        oos.flush();
+      }
+    } catch (java.io.IOException e)
+    {
+    }
   }
 
   public void populateList(String folder)

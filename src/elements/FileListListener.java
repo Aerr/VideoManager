@@ -30,6 +30,7 @@ public class FileListListener extends MouseAdapter
       {
         Desktop.getDesktop().open(new File(name));
         Prefs.getInstance().getPrefs().putBoolean(Integer.toString(name.hashCode()), true);
+        System.out.println();
         item.setForeground(Color.LIGHT_GRAY);
       } catch (IOException exception)
       {

@@ -1,6 +1,5 @@
 package listing;
 
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class Prefs
@@ -22,18 +21,6 @@ public class Prefs
   private Prefs()
   {
     prefs = Preferences.userRoot().node(this.getClass().getName());
-    // clear();
-  }
-
-  @SuppressWarnings("unused")
-  private void clear()
-  {
-    try
-    {
-      prefs.clear();
-    } catch (BackingStoreException e)
-    {
-    }
   }
 
   public Preferences getPrefs()

@@ -6,7 +6,10 @@
 
 package elements;
 
-public class MediaElement
+import java.io.Serializable;
+import listing.Prefs;
+
+public class MediaElement implements Serializable
 {
 
   private String name;
@@ -34,7 +37,8 @@ public class MediaElement
    */
   public boolean getSeen()
   {
-    return seen;
+    System.out.println(Prefs.getInstance().getPrefs().getBoolean(Integer.toString(path.hashCode()), false));
+    return Prefs.getInstance().getPrefs().getBoolean(Integer.toString(path.hashCode()), false);
   }
 
   /**
