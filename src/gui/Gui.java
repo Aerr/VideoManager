@@ -5,10 +5,14 @@ import elements.CButton;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -128,6 +132,21 @@ public final class Gui extends JFrame
         oos.flush();
       }
     } catch (java.io.IOException e)
+    {
+    }
+  }
+
+  private void load_database()
+  {
+    try
+    {
+      FileInputStream file = new FileInputStream("database");
+      GZIPInputStream gzis = new GZIPInputStream(file);
+      ObjectInputStream ois = new ObjectInputStream(gzis);
+      HashMap<String, TreeSet<CButton>> setButtons = (HashMap<String, TreeSet<CButton>>) ois.readObject();
+      FileWalker.getInstance().setSetButtons(setButtons);
+      ois.close();
+    } catch (java.io.IOException | ClassNotFoundException e)
     {
     }
   }

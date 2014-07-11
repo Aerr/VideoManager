@@ -118,6 +118,11 @@ public class CButton extends JButton implements Comparable<CButton>
   @Override
   public int compareTo(CButton o)
   {
-    return this.getText().compareTo(o.getText());
+    final int compareTo = this.getText().compareTo(o.getText());
+
+    if (this != o && compareTo == 0)
+      return this.getPath().compareTo(o.getPath());
+    else
+      return compareTo;
   }
 }

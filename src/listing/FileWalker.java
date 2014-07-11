@@ -24,7 +24,7 @@ import static misc.Utils.getPrefix;
 public class FileWalker
 {
 
-  private final HashMap<String, TreeSet<CButton>> setButtons;
+  private HashMap<String, TreeSet<CButton>> setButtons;
 
   private FileWalker()
   {
@@ -42,6 +42,14 @@ public class FileWalker
   public HashMap<String, TreeSet<CButton>> getSetButtons()
   {
     return setButtons;
+  }
+
+  /**
+   * @param setButtons the setButtons to set
+   */
+  public void setSetButtons(HashMap<String, TreeSet<CButton>> setButtons)
+  {
+    this.setButtons = setButtons;
   }
 
   private static class FileWalkerHolder
