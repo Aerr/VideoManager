@@ -14,7 +14,7 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import misc.Utils;
 
-public class CButton extends JButton
+public class CButton extends JButton implements Comparable<CButton>
 {
 
   private static final long serialVersionUID = 1L;
@@ -113,5 +113,11 @@ public class CButton extends JButton
   public String toString()
   {
     return getText();
+  }
+
+  @Override
+  public int compareTo(CButton o)
+  {
+    return this.getText().compareTo(o.getText());
   }
 }

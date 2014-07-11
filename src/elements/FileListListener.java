@@ -26,16 +26,23 @@ public class FileListListener extends MouseAdapter
     if (e.getButton() == MouseEvent.BUTTON1)
     {
       String name = item.getPath();
+
       try
       {
-        Desktop.getDesktop().open(new File(name));
-        Prefs.getInstance().getPrefs().putBoolean(Integer.toString(name.hashCode()), true);
-        System.out.println();
-        item.setForeground(Color.LIGHT_GRAY);
+        if (System.getProperty("os.name").equals("Linux"))
+          Runtime.getRuntime().exec(new String[]
+          {
+            "bash", "-c", "vlc \"" + item.getPath() + "\""
+          });
+        else
+          Desktop.getDesktop().open(new File(name));
       } catch (IOException exception)
       {
         System.err.println("Could not open: " + name + System.lineSeparator());
       }
+
+      Prefs.getInstance().getPrefs().putBoolean(Integer.toString(name.hashCode()), true);
+      item.setForeground(Color.LIGHT_GRAY);
     }
   }
 }

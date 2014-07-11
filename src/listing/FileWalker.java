@@ -9,8 +9,8 @@ import elements.ButtonHolder;
 import elements.CButton;
 import elements.MediaElement;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import misc.Tuple;
@@ -24,7 +24,7 @@ import static misc.Utils.getPrefix;
 public class FileWalker
 {
 
-  private final HashMap<String, ArrayList<CButton>> setButtons;
+  private final HashMap<String, TreeSet<CButton>> setButtons;
 
   private FileWalker()
   {
@@ -39,7 +39,7 @@ public class FileWalker
   /**
    * @return the setButtons
    */
-  public HashMap<String, ArrayList<CButton>> getSetButtons()
+  public HashMap<String, TreeSet<CButton>> getSetButtons()
   {
     return setButtons;
   }
@@ -50,15 +50,15 @@ public class FileWalker
     private static final FileWalker INSTANCE = new FileWalker();
   }
 
-  public ArrayList<CButton> getFiles(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot)
+  public TreeSet<CButton> getFiles(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot)
   {
-    setButtons.put("All", new ArrayList<CButton>());
+    setButtons.put("All", new TreeSet<CButton>());
     new File("thumbs").mkdirs();
     walk(path, jPanel, treeRoot, null);
     return setButtons.get("All");
   }
 
-  private void walk(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot, ArrayList<CButton> buttonsList)
+  private void walk(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot, TreeSet<CButton> buttonsList)
   {
     File rootFolder = new File(path);
     File[] list = rootFolder.listFiles();
@@ -78,7 +78,7 @@ public class FileWalker
       {
         final DefaultMutableTreeNode node = new DefaultMutableTreeNode(new Tuple(file, f.getAbsolutePath()));
         treeRoot.add(node);
-        setButtons.put(file, new ArrayList<CButton>());
+        setButtons.put(file, new TreeSet<CButton>());
         walk(f.getAbsolutePath(), jPanel, node, setButtons.get(file));
       }
       else if ((file = isVideo(fileToString, file, Utils.EXTENSIONS)) != null)

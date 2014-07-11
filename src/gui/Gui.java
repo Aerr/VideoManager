@@ -7,8 +7,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.zip.GZIPOutputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -81,11 +81,11 @@ public final class Gui extends JFrame
       @Override
       public void caretUpdate(CaretEvent arg0)
       {
-        ArrayList<CButton> get = FileWalker.getInstance().getSetButtons().get(currentFolder);
+        TreeSet<CButton> get = FileWalker.getInstance().getSetButtons().get(currentFolder);
         if (jTextField.getText().equals(""))
           populateList(get);
 
-        get = new ArrayList(get);
+        get = new TreeSet(get);
         for (Iterator<CButton> it = get.iterator(); it.hasNext();)
         {
           CButton cButton = it.next();
@@ -137,7 +137,7 @@ public final class Gui extends JFrame
     if (currentFolder.equals(folder))
       return;
 
-    final ArrayList<CButton> files = FileWalker.getInstance().getSetButtons().get(folder);
+    final TreeSet<CButton> files = FileWalker.getInstance().getSetButtons().get(folder);
     if (files == null)
       return;
 
@@ -145,7 +145,7 @@ public final class Gui extends JFrame
     currentFolder = folder;
   }
 
-  private void populateList(final ArrayList<CButton> files)
+  private void populateList(final TreeSet<CButton> files)
   {
     jPanel.removeAll();
 
