@@ -75,8 +75,7 @@ public class FileWalker
       String file = fileToString;
 
       file = getSuffix(file, fileSeparator);
-      file = getPrefix(file, "[", "1080p", "720p", "x264", "HDTV", "FASTSUB", "VOSTFR", "MULTI",
-                       "FINAL", "REPACK", "FRENCH", "COMPLETE");
+      file = getPrefix(file, Utils.DUMP_KEYWORDS);
       file = file.replace('.', ' ').trim();
 
       if (f.isDirectory())
@@ -86,11 +85,10 @@ public class FileWalker
         setButtons.put(file, new ArrayList<CButton>());
         walk(f.getAbsolutePath(), jPanel, node, setButtons.get(file));
       }
-      else if (fileToString.endsWith(".mkv") || fileToString.endsWith(".mp4") || fileToString.endsWith(".avi"))
+      else if ((file = isVideo(fileToString, file, Utils.EXTENSIONS)) != null)
       {
-        final CButton cButton = new CButton(new MediaElement(file, fileToString,
+        final CButton cButton = new CButton(new MediaElement(file.trim(), fileToString,
                                                              (String) rootToTuple(treeRoot).y, false));
-
         jPanel.add(new ButtonHolder(cButton));
         if (buttonsList != null)
           buttonsList.add(cButton);
@@ -114,4 +112,12 @@ public class FileWalker
       return src.substring(i + 1);
   }
 
+  private String isVideo(String path, String filename, String... extensions)
+  {
+    for (String ext : extensions)
+      if (path.endsWith(ext))
+        return filename.replace(ext.substring(1), "");
+
+    return null;
+  }
 }
