@@ -1,10 +1,11 @@
-import gui.Gui;
 
+import gui.Gui;
 
 public class Main
 {
-	public static void main(String[] args)
-	{
-        Gui.getInstance();
-	}
+
+  public static void main(String[] args)
+  {
+    Gui.getInstance();
+  }
 }

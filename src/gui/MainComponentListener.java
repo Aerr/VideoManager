@@ -7,33 +7,34 @@ import java.awt.event.ComponentListener;
 
 class MainComponentListener implements ComponentListener
 {
-    private final GridLayout gridLayout;
-    private Container parent;
 
-    MainComponentListener(Container parent, GridLayout gridLayout)
-    {
-        this.gridLayout = gridLayout;
-        this.parent = parent;
-    }
+  private final GridLayout gridLayout;
+  private Container parent;
 
-    @Override
-    public void componentShown(ComponentEvent e)
-    {
-    }
+  MainComponentListener(Container parent, GridLayout gridLayout)
+  {
+    this.gridLayout = gridLayout;
+    this.parent = parent;
+  }
 
-    @Override
-    public void componentResized(ComponentEvent e)
-    {
-        gridLayout.setColumns(parent.getSize().width / 150);
-    }
+  @Override
+  public void componentShown(ComponentEvent e)
+  {
+  }
 
-    @Override
-    public void componentMoved(ComponentEvent e)
-    {
-    }
+  @Override
+  public void componentResized(ComponentEvent e)
+  {
+    gridLayout.setColumns(parent.getSize().width / 150);
+  }
 
-    @Override
-    public void componentHidden(ComponentEvent e)
-    {
-    }
+  @Override
+  public void componentMoved(ComponentEvent e)
+  {
+  }
+
+  @Override
+  public void componentHidden(ComponentEvent e)
+  {
+  }
 }
