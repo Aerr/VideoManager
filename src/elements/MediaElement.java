@@ -37,7 +37,6 @@ public class MediaElement implements Serializable
    */
   public boolean getSeen()
   {
-    System.out.println(Prefs.getInstance().getPrefs().getBoolean(Integer.toString(path.hashCode()), false));
     return Prefs.getInstance().getPrefs().getBoolean(Integer.toString(path.hashCode()), false);
   }
 

@@ -2,6 +2,7 @@ package elements;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -85,6 +86,17 @@ public class CButton extends JButton
     int width = (int) (height / ratio);
 
     return new Dimension(width, height);
+  }
+
+  @Override
+  protected void paintComponent(Graphics g)
+  {
+    super.paintComponent(g);
+    if (element.getSeen())
+    {
+      g.setColor(new Color(255, 255, 255, 128));
+      g.fillRect(0, 0, getWidth(), getHeight() - 20);
+    }
   }
 
   public String getPath()
