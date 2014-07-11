@@ -41,7 +41,7 @@ public class CButton extends JButton implements Comparable<CButton>
     addMouseListener(new FileListListener(this));
 
     if (this.element.getSeen())
-      this.setForeground(Color.LIGHT_GRAY);
+      this.setForeground(Color.LIGHT_GRAY.darker());
   }
 
   public void setImage(BufferedImage newImage)
@@ -95,7 +95,7 @@ public class CButton extends JButton implements Comparable<CButton>
     if (element.getSeen())
     {
       g.setColor(new Color(255, 255, 255, 128));
-      g.fillRect(0, 0, getWidth(), getHeight() - 20);
+      g.fillRect(0, 1, getWidth(), getHeight() - 22);
     }
   }
 

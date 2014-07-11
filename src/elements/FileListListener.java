@@ -42,7 +42,7 @@ public class FileListListener extends MouseAdapter
       }
 
       Prefs.getInstance().getPrefs().putBoolean(Integer.toString(name.hashCode()), true);
-      item.setForeground(Color.LIGHT_GRAY);
+      item.setForeground(Color.LIGHT_GRAY.darker());
     }
   }
 }
