@@ -6,24 +6,49 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import misc.Utils;
 
-public class CButton extends JButton implements Comparable<CButton>
+public class CButton extends JButton implements Comparable<CButton>, Externalizable
 {
 
   private static final long serialVersionUID = 1L;
   MediaElement element;
 
+  public CButton()
+  {
+    super();
+  }
+
   public CButton(MediaElement element)
   {
-    super(element.getName());
+    super();
     this.element = element;
+
+    initialize();
+  }
+
+  private void initialize()
+  {
+    if (element != null)
+    {
+      this.setText(element.getName());
+      this.setToolTipText(this.element.getName());
+      if (this.element.getSeen())
+        this.setForeground(Color.LIGHT_GRAY.darker());
+      this.setIcon(element.getIcon());
+
+    }
+    if (this.getIcon() == null)
+      new IconDownloader(this).execute();
 
     setForeground(Color.white);
     setBackground(null);
@@ -34,14 +59,9 @@ public class CButton extends JButton implements Comparable<CButton>
     setPreferredSize(Utils.ICON_DIMENSION);
     setMaximumSize(Utils.ICON_DIMENSION);
     setMinimumSize(Utils.ICON_DIMENSION);
-    setToolTipText(element.getName());
-
-    new IconDownloader(this).execute();
 
     addMouseListener(new FileListListener(this));
 
-    if (this.element.getSeen())
-      this.setForeground(Color.LIGHT_GRAY.darker());
   }
 
   public void setImage(BufferedImage newImage)
@@ -61,7 +81,8 @@ public class CButton extends JButton implements Comparable<CButton>
       g2.dispose();
 
       saveFile("thumbs/" + getText().hashCode(), image);
-      setIcon(new ImageIcon(image));
+      element.setIcon(new ImageIcon(image));
+      this.setIcon(element.getIcon());
 
       revalidate();
       repaint();
@@ -124,5 +145,18 @@ public class CButton extends JButton implements Comparable<CButton>
       return this.getPath().compareTo(o.getPath());
     else
       return compareTo;
+  }
+
+  @Override
+  public void writeExternal(ObjectOutput out) throws IOException
+  {
+    out.writeObject(this.element);
+  }
+
+  @Override
+  public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+  {
+    this.element = (MediaElement) in.readObject();
+    initialize();
   }
 }

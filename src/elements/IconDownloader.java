@@ -47,6 +47,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
 
     } catch (IOException e)
     {
+      e.printStackTrace();
     } finally
     {
       try
@@ -55,6 +56,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
           is.close();
       } catch (IOException e)
       {
+        e.printStackTrace();
       }
     }
 

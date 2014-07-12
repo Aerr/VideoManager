@@ -31,7 +31,7 @@ public final class Gui extends JFrame
 {
 
   private static final long serialVersionUID = 1L;
-  private String currentFolder;
+  private String currentFolder = "";
   private final JPanel jPanel;
 
   private static class GuiHolder
@@ -50,6 +50,15 @@ public final class Gui extends JFrame
     setTitle("Video Manager");
     setMinimumSize(new Dimension(1024, 768));
     setPreferredSize(new Dimension(1024, 768));
+
+    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        save_database();
+      }
+    }));
 
     JSplitPane jSplitPane = new javax.swing.JSplitPane();
     jSplitPane.setOneTouchExpandable(true);
@@ -106,8 +115,9 @@ public final class Gui extends JFrame
 
     JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
 
-    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/", jPanel,
-                                      TreeExplorer.getInstance().getExplorerRoot());
+    if (!load_database())
+      FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
+                                        TreeExplorer.getInstance().getExplorerRoot());
 
     jScrollPane1.setViewportView(TreeExplorer.getInstance());
 
@@ -115,7 +125,7 @@ public final class Gui extends JFrame
 
     add(jSplitPane);
 
-    currentFolder = "All";
+    populateList("All");
     pack();
     setVisible(true);
   }
@@ -136,7 +146,7 @@ public final class Gui extends JFrame
     }
   }
 
-  private void load_database()
+  private boolean load_database()
   {
     try
     {
@@ -148,7 +158,10 @@ public final class Gui extends JFrame
       ois.close();
     } catch (java.io.IOException | ClassNotFoundException e)
     {
+      e.printStackTrace();
+      return false;
     }
+    return true;
   }
 
   public void populateList(String folder)

@@ -5,13 +5,11 @@
  */
 package listing;
 
-import elements.ButtonHolder;
 import elements.CButton;
 import elements.MediaElement;
 import java.io.File;
 import java.util.HashMap;
 import java.util.TreeSet;
-import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import misc.Tuple;
 import misc.Utils;
@@ -58,15 +56,15 @@ public class FileWalker
     private static final FileWalker INSTANCE = new FileWalker();
   }
 
-  public TreeSet<CButton> getFiles(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot)
+  public TreeSet<CButton> getFiles(String path, DefaultMutableTreeNode treeRoot)
   {
     setButtons.put("All", new TreeSet<CButton>());
     new File("thumbs").mkdirs();
-    walk(path, jPanel, treeRoot, null);
+    walk(path, treeRoot, null);
     return setButtons.get("All");
   }
 
-  private void walk(String path, JPanel jPanel, DefaultMutableTreeNode treeRoot, TreeSet<CButton> buttonsList)
+  private void walk(String path, DefaultMutableTreeNode treeRoot, TreeSet<CButton> buttonsList)
   {
     File rootFolder = new File(path);
     File[] list = rootFolder.listFiles();
@@ -87,7 +85,7 @@ public class FileWalker
         final DefaultMutableTreeNode node = new DefaultMutableTreeNode(new Tuple(file, f.getAbsolutePath()));
         treeRoot.add(node);
         setButtons.put(file, new TreeSet<CButton>());
-        walk(f.getAbsolutePath(), jPanel, node, setButtons.get(file));
+        walk(f.getAbsolutePath(), node, setButtons.get(file));
       }
       else if ((file = isVideo(fileToString, file, Utils.EXTENSIONS)) != null)
       {
@@ -96,7 +94,6 @@ public class FileWalker
                                  getCleanName((String) rootToTuple(treeRoot).y, fileSeparator),
                                  false));
 
-        jPanel.add(new ButtonHolder(cButton));
         if (buttonsList != null)
           buttonsList.add(cButton);
         setButtons.get("All").add(cButton);

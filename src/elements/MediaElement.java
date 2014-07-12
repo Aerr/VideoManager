@@ -3,20 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package elements;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import javax.swing.ImageIcon;
 import listing.Prefs;
 
-public class MediaElement implements Serializable
+public class MediaElement implements Externalizable
 {
+  private static final long serialVersionUID = 1L;
 
   private String name;
   private String path;
   private String parentFolder;
   private String tag;
   private boolean seen;
+  private ImageIcon icon;
+
+  public MediaElement()
+  {
+  }
 
   public MediaElement(String name, String path, String parentFolder, String tag, boolean seen)
   {
@@ -25,6 +34,7 @@ public class MediaElement implements Serializable
     this.parentFolder = parentFolder;
     this.tag = tag;
     this.seen = seen;
+    this.icon = null;
   }
 
   public MediaElement(String name, String path, String parentFolder, boolean seen)
@@ -72,4 +82,41 @@ public class MediaElement implements Serializable
     return parentFolder;
   }
 
+  @Override
+  public void writeExternal(ObjectOutput out) throws IOException
+  {
+    out.writeObject(name);
+    out.writeObject(path);
+    out.writeObject(parentFolder);
+    out.writeObject(tag);
+    out.writeBoolean(seen);
+    out.writeObject(icon);
+  }
+
+  @Override
+  public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+  {
+    this.name = (String) in.readObject();
+    this.path = (String) in.readObject();
+    this.parentFolder = (String) in.readObject();
+    this.tag = (String) in.readObject();
+    this.seen = in.readBoolean();
+    this.icon = (ImageIcon) in.readObject();
+  }
+
+  /**
+   * @return the icon
+   */
+  public ImageIcon getIcon()
+  {
+    return icon;
+  }
+
+  /**
+   * @param icon the icon to set
+   */
+  public void setIcon(ImageIcon icon)
+  {
+    this.icon = icon;
+  }
 }
