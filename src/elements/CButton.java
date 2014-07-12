@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -87,6 +89,16 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
       revalidate();
       repaint();
     }
+    if (element.getIcon() == null)
+      try
+      {
+        BufferedImage image = ImageIO.read(new File("thumbs/-886812882.jpg"));
+        element.setIcon(new ImageIcon(image));
+        this.setIcon(element.getIcon());
+      } catch (IOException ex)
+      {
+        Logger.getLogger(CButton.class.getName()).log(Level.SEVERE, null, ex);
+      }
   }
 
   public void saveFile(final String filename, final BufferedImage image)
