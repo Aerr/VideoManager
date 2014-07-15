@@ -11,8 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -66,39 +64,35 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
 
   }
 
-  public void setImage(BufferedImage newImage)
+  public void setImage(BufferedImage newImage, boolean isNew)
   {
     if (newImage != null)
     {
-      Dimension dim = getRatio(newImage.getWidth(), newImage.getHeight());
+      if (isNew)
+      {
+        Dimension dim = getRatio(newImage.getWidth(), newImage.getHeight());
 
-      BufferedImage image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
-      Graphics2D g2 = image.createGraphics();
+        BufferedImage image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = image.createGraphics();
 
-      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                          RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-      g2.drawImage(newImage, 0, 0, dim.width, dim.height, null);
-      g2.dispose();
+        g2.drawImage(newImage, 0, 0, dim.width, dim.height, null);
+        g2.dispose();
 
-      saveFile("thumbs/" + getText().hashCode(), image);
-      element.setIcon(new ImageIcon(image));
+        saveFile("thumbs/" + getText().hashCode(), image);
+        element.setIcon(new ImageIcon(image));
+      }
+      else
+        element.setIcon(new ImageIcon(newImage));
+
       this.setIcon(element.getIcon());
 
       revalidate();
       repaint();
     }
-    if (element.getIcon() == null)
-      try
-      {
-        BufferedImage image = ImageIO.read(new File("thumbs/-886812882.jpg"));
-        element.setIcon(new ImageIcon(image));
-        this.setIcon(element.getIcon());
-      } catch (IOException ex)
-      {
-        Logger.getLogger(CButton.class.getName()).log(Level.SEVERE, null, ex);
-      }
   }
 
   public void saveFile(final String filename, final BufferedImage image)

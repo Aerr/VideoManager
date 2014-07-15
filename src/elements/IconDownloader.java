@@ -27,7 +27,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
     File f = new File("thumbs/" + button.getText().hashCode() + ".jpg");
     if (f.exists() && !f.isDirectory())
     {
-      button.setImage(ImageIO.read(f));
+      button.setImage(ImageIO.read(f), false);
       return null;
     }
 
@@ -62,9 +62,15 @@ public class IconDownloader extends SwingWorker<Void, Void>
 
     resultURL = res.toString();
     resultURL = resultURL.substring(resultURL.indexOf("imgurl:&quot;") + "imgurl:&quot;".length());
-    resultURL = resultURL.substring(0, resultURL.indexOf("&quot;,"));
-
-    button.setImage(ImageIO.read(new URL(resultURL)));
+    final int indexOf = resultURL.indexOf("&quot;,");
+    try
+    {
+      resultURL = resultURL.substring(0, indexOf);
+      button.setImage(ImageIO.read(new URL(resultURL)), true);
+    } catch (IOException e)
+    {
+      button.setImage(ImageIO.read(new File("unknown.png")), true);
+    }
 
     return null;
   }
