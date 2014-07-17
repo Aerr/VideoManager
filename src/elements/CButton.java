@@ -82,7 +82,7 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
         g2.drawImage(newImage, 0, 0, dim.width, dim.height, null);
         g2.dispose();
 
-        saveFile("thumbs/" + getText().hashCode(), image);
+//        saveFile("thumbs/" + getText().hashCode(), image);
         element.setIcon(new ImageIcon(image));
       }
       else

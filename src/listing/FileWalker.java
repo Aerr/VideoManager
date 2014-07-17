@@ -13,7 +13,6 @@ import java.util.TreeSet;
 import javax.swing.tree.DefaultMutableTreeNode;
 import misc.Tuple;
 import misc.Utils;
-import static misc.Utils.getPrefix;
 
 /**
  *
@@ -58,13 +57,19 @@ public class FileWalker
 
   public TreeSet<CButton> getFiles(String path, DefaultMutableTreeNode treeRoot)
   {
-    setButtons.put("All", new TreeSet<CButton>());
+    putNew("All");
     new File("thumbs").mkdirs();
     walk(path, treeRoot, null);
     return setButtons.get("All");
   }
 
-  private void walk(String path, DefaultMutableTreeNode treeRoot, TreeSet<CButton> buttonsList)
+  private void putNew(final String newKey)
+  {
+    if (setButtons.get(newKey) == null)
+      setButtons.put(newKey, new TreeSet<CButton>());
+  }
+
+  protected void walk(String path, DefaultMutableTreeNode treeRoot, TreeSet<CButton> buttonsList)
   {
     File rootFolder = new File(path);
     File[] list = rootFolder.listFiles();
@@ -84,20 +89,22 @@ public class FileWalker
       {
         final DefaultMutableTreeNode node = new DefaultMutableTreeNode(new Tuple(file, f.getAbsolutePath()));
         treeRoot.add(node);
-        setButtons.put(file, new TreeSet<CButton>());
+        putNew(file);
         walk(f.getAbsolutePath(), node, setButtons.get(file));
       }
       else if ((file = isVideo(fileToString, file, Utils.EXTENSIONS)) != null)
-      {
-        final CButton cButton = new CButton(
-                new MediaElement(file.trim(), fileToString,
-                                 getCleanName((String) rootToTuple(treeRoot).y, fileSeparator),
-                                 false));
+        if (!Prefs.getInstance().getPrefs().getBoolean(file.trim(), false))
+        {
+          final CButton cButton = new CButton(
+                  new MediaElement(file.trim(), fileToString,
+                                   getCleanName((String) rootToTuple(treeRoot).y, fileSeparator),
+                                   false));
 
-        if (buttonsList != null)
-          buttonsList.add(cButton);
-        setButtons.get("All").add(cButton);
-      }
+          if (buttonsList != null)
+            buttonsList.add(cButton);
+          setButtons.get("All").add(cButton);
+          Prefs.getInstance().getPrefs().putBoolean(file.trim(), true);
+        }
     }
   }
 
@@ -106,7 +113,7 @@ public class FileWalker
     if (fileToString == null)
       return null;
     String file = getSuffix(fileToString, fileSeparator);
-    file = getPrefix(file, Utils.DUMP_KEYWORDS);
+    file = Utils.getPrefix(file, Utils.DUMP_KEYWORDS);
     file = file.replace('.', ' ').trim();
     return file;
   }

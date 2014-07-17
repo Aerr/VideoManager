@@ -1,19 +1,14 @@
 package gui;
 
+import database.DatabaseManager;
+import database.DatabaseSaver;
 import elements.ButtonHolder;
 import elements.CButton;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -50,15 +45,6 @@ public final class Gui extends JFrame
     setTitle("Video Manager");
     setMinimumSize(new Dimension(1024, 768));
     setPreferredSize(new Dimension(1024, 768));
-
-    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        save_database();
-      }
-    }));
 
     JSplitPane jSplitPane = new javax.swing.JSplitPane();
     jSplitPane.setOneTouchExpandable(true);
@@ -115,9 +101,9 @@ public final class Gui extends JFrame
 
     JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
 
-    if (!load_database())
-      FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
-                                        TreeExplorer.getInstance().getExplorerRoot());
+    DatabaseManager.load_database();
+    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
+                                      TreeExplorer.getInstance().getExplorerRoot());
 
     jScrollPane1.setViewportView(TreeExplorer.getInstance());
 
@@ -126,42 +112,9 @@ public final class Gui extends JFrame
     add(jSplitPane);
 
     populateList("All");
+    new DatabaseSaver().execute();
     pack();
     setVisible(true);
-  }
-
-  private void save_database()
-  {
-    try
-    {
-      FileOutputStream fos = new FileOutputStream("database");
-      GZIPOutputStream gzos = new GZIPOutputStream(fos);
-      try (ObjectOutputStream oos = new ObjectOutputStream(gzos))
-      {
-        oos.writeObject(FileWalker.getInstance().getSetButtons());
-        oos.flush();
-      }
-    } catch (java.io.IOException e)
-    {
-    }
-  }
-
-  private boolean load_database()
-  {
-    try
-    {
-      FileInputStream file = new FileInputStream("database");
-      GZIPInputStream gzis = new GZIPInputStream(file);
-      ObjectInputStream ois = new ObjectInputStream(gzis);
-      HashMap<String, TreeSet<CButton>> setButtons = (HashMap<String, TreeSet<CButton>>) ois.readObject();
-      FileWalker.getInstance().setSetButtons(setButtons);
-      ois.close();
-    } catch (java.io.IOException | ClassNotFoundException e)
-    {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
   }
 
   public void populateList(String folder)
