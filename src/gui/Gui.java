@@ -51,74 +51,20 @@ public final class Gui extends JFrame
 
     setMinimumSize(new Dimension(1024, 768));
     setPreferredSize(new Dimension(1024, 768));
-
-    JSplitPane jSplitPane = new javax.swing.JSplitPane();
-    jSplitPane.setOneTouchExpandable(true);
-    jSplitPane.setDividerLocation(110);
-    jSplitPane.setDividerSize(9);
-    jSplitPane.setUI(new BasicSplitPaneUI());
-
-    jPanel = new JPanel();
-    jPanel.setBackground(new Color(39, 39, 39));
-    final GridLayout gridLayout = new GridLayout(0, 4);
-    gridLayout.setVgap(Utils.GUI_VGAP);
-    gridLayout.setHgap(Utils.GUI_HGAP);
-    jPanel.setBorder(BorderFactory.createEmptyBorder(Utils.GUI_INSET, Utils.GUI_INSET / 2,
-                                                     Utils.GUI_INSET, Utils.GUI_INSET / 2));
-    jPanel.setLayout(gridLayout);
-
-    addComponentListener(new MainComponentListener(this, gridLayout));
-
     setLocationRelativeTo(null);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-    final JScrollPane jScrollPane = new JScrollPane(jPanel);
-    jScrollPane.getVerticalScrollBar().setUnitIncrement(18);
-    jScrollPane.setBackground(null);
+    JSplitPane jSplitPane = splitPaneInit();
 
-    jSplitPane.setRightComponent(jScrollPane);
+    jPanel = new JPanel();
+    final JScrollPane mediaGrid = mediaGridInit();
+    jSplitPane.setRightComponent(mediaGrid);
 
     JMenuBar jMenuBar = new JMenuBar();
-    final JTextField searchBar = new JTextField();
-    searchBar.addCaretListener(new CaretListener()
-    {
-
-      @Override
-      public void caretUpdate(CaretEvent arg0)
-      {
-        TreeSet<CButton> get = FileWalker.getInstance().getSetButtons().get(currentFolder);
-        if (searchBar.getText().equals(""))
-          populateList(get);
-
-        get = new TreeSet(get);
-        for (Iterator<CButton> it = get.iterator(); it.hasNext();)
-        {
-          CButton cButton = it.next();
-          if (!cButton.toString().toLowerCase().contains(
-                  searchBar.getText().toLowerCase()))
-            it.remove();
-        }
-
-        populateList(get);
-
-        Prefs.getInstance().getPrefs().put("Last-Prefs-SearchBar", searchBar.getText());
-      }
-    });
+    JTextField searchBar = searchBarInit();
 
     jMenuBar.add(searchBar);
-    final JButton refresh = new JButton("Refresh");
-    refresh.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        Prefs.getInstance().clear();
-        FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
-                                          TreeExplorer.getInstance().getExplorerRoot());
-        populateList("All");
-        new DatabaseSaver().execute();
-      }
-    });
+    JButton refresh = refreshButtonInit();
 
     jMenuBar.add(refresh);
 
@@ -144,6 +90,82 @@ public final class Gui extends JFrame
     new DatabaseSaver().execute();
     pack();
     setVisible(true);
+  }
+
+  private JButton refreshButtonInit()
+  {
+    final JButton refresh = new JButton("Refresh");
+    refresh.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        Prefs.getInstance().clear();
+        FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
+                                          TreeExplorer.getInstance().getExplorerRoot());
+        populateList("All");
+        new DatabaseSaver().execute();
+      }
+    });
+    return refresh;
+  }
+
+  private JTextField searchBarInit()
+  {
+    final JTextField searchBar = new JTextField();
+    searchBar.addCaretListener(new CaretListener()
+    {
+
+      @Override
+      public void caretUpdate(CaretEvent arg0)
+      {
+        TreeSet<CButton> get = FileWalker.getInstance().getSetButtons().get(currentFolder);
+        if (searchBar.getText().equals(""))
+          populateList(get);
+
+        get = new TreeSet(get);
+        for (Iterator<CButton> it = get.iterator(); it.hasNext();)
+        {
+          CButton cButton = it.next();
+          if (!cButton.toString().toLowerCase().contains(
+                  searchBar.getText().toLowerCase()))
+            it.remove();
+        }
+
+        populateList(get);
+
+        Prefs.getInstance().getPrefs().put("Last-Prefs-SearchBar", searchBar.getText());
+      }
+    });
+    return searchBar;
+  }
+
+  private JScrollPane mediaGridInit()
+  {
+    jPanel.setBackground(new Color(39, 39, 39));
+    final GridLayout gridLayout = new GridLayout(0, 4);
+    gridLayout.setVgap(Utils.GUI_VGAP);
+    gridLayout.setHgap(Utils.GUI_HGAP);
+    jPanel.setBorder(BorderFactory.createEmptyBorder(Utils.GUI_INSET, Utils.GUI_INSET / 2,
+                                                     Utils.GUI_INSET, Utils.GUI_INSET / 2));
+    jPanel.setLayout(gridLayout);
+    addComponentListener(new MainComponentListener(this, gridLayout));
+
+    final JScrollPane jScrollPane = new JScrollPane(jPanel);
+    jScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+    jScrollPane.setBackground(null);
+
+    return jScrollPane;
+  }
+
+  private JSplitPane splitPaneInit()
+  {
+    JSplitPane jSplitPane = new javax.swing.JSplitPane();
+    jSplitPane.setOneTouchExpandable(true);
+    jSplitPane.setDividerLocation(110);
+    jSplitPane.setDividerSize(9);
+    jSplitPane.setUI(new BasicSplitPaneUI());
+    return jSplitPane;
   }
 
   public void populateList(String folder)
