@@ -6,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import listing.Prefs;
 
 public class FileListListener extends MouseAdapter
 {
@@ -41,7 +40,7 @@ public class FileListListener extends MouseAdapter
         System.err.println("Could not open: " + name + System.lineSeparator());
       }
 
-      Prefs.getInstance().getPrefs().putBoolean(Integer.toString(name.hashCode()), true);
+      item.setSeen();
       item.setForeground(Color.LIGHT_GRAY.darker());
     }
   }

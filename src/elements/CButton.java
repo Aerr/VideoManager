@@ -42,8 +42,8 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     {
       this.setText(element.getName());
       this.setToolTipText(this.element.getName());
-      if (this.element.getSeen())
-        this.setForeground(Color.LIGHT_GRAY.darker());
+      if (element.getSeen())
+        this.setSeen();
       this.setIcon(element.getIcon());
 
     }
@@ -124,6 +124,12 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
       g.setColor(new Color(255, 255, 255, 128));
       g.fillRect(0, 1, getWidth(), getHeight() - 22);
     }
+  }
+
+  public void setSeen()
+  {
+    element.setSeen(true);
+    this.setForeground(Color.LIGHT_GRAY.darker());
   }
 
   public String getPath()

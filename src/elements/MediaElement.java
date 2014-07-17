@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import javax.swing.ImageIcon;
-import listing.Prefs;
 
 public class MediaElement implements Externalizable
 {
@@ -47,7 +46,7 @@ public class MediaElement implements Externalizable
    */
   public boolean getSeen()
   {
-    return Prefs.getInstance().getPrefs().getBoolean(Integer.toString(path.hashCode()), false);
+    return seen;
   }
 
   /**

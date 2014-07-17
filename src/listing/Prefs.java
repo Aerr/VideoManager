@@ -1,5 +1,8 @@
 package listing;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class Prefs
@@ -21,6 +24,13 @@ public class Prefs
   private Prefs()
   {
     prefs = Preferences.userRoot().node(this.getClass().getName());
+    try
+    {
+      prefs.clear();
+    } catch (BackingStoreException ex)
+    {
+      Logger.getLogger(Prefs.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
 
   public Preferences getPrefs()
