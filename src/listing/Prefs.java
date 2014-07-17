@@ -21,7 +21,6 @@ public class Prefs
   private Prefs()
   {
     prefs = Preferences.userRoot().node(this.getClass().getName());
-    clear();
   }
 
   public void clear()

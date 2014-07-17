@@ -79,8 +79,7 @@ public final class Gui extends JFrame
     jSplitPane.setRightComponent(jScrollPane);
 
     JMenuBar jMenuBar = new JMenuBar();
-    final JTextField searchBar = new JTextField(100);
-
+    final JTextField searchBar = new JTextField();
     searchBar.addCaretListener(new CaretListener()
     {
 
@@ -101,8 +100,11 @@ public final class Gui extends JFrame
         }
 
         populateList(get);
+
+        Prefs.getInstance().getPrefs().put("Last-Prefs-SearchBar", searchBar.getText());
       }
     });
+
     jMenuBar.add(searchBar);
     final JButton refresh = new JButton("Refresh");
     refresh.addActionListener(new ActionListener()
@@ -135,6 +137,10 @@ public final class Gui extends JFrame
     add(jSplitPane);
 
     populateList("All");
+
+    searchBar.setText(Prefs.getInstance().getPrefs().get("Last-Prefs-SearchBar", ""));
+    searchBar.getCaretListeners()[0].caretUpdate(null);
+
     new DatabaseSaver().execute();
     pack();
     setVisible(true);
