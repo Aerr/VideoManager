@@ -21,7 +21,7 @@ public class FileListListener extends MouseAdapter
     super.mouseClicked(e);
     if (e.getButton() == MouseEvent.BUTTON1)
     {
-      if (e.getClickCount() == 2)
+      if (e.getClickCount() == 1)
         DatabaseManager.playFile(item);
     }
     else
