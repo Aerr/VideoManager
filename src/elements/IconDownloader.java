@@ -69,7 +69,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
       button.setImage(ImageIO.read(new URL(resultURL)), true);
     } catch (IOException e)
     {
-      button.setImage(ImageIO.read(new File("unknown.png")), true);
+      button.setImage(ImageIO.read(new File("resources/unknown.png")), true);
     }
 
     return null;

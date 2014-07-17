@@ -21,12 +21,17 @@ public class Prefs
   private Prefs()
   {
     prefs = Preferences.userRoot().node(this.getClass().getName());
-//    try
-//    {
-//      prefs.clear();
-//    } catch (Exception e)
-//    {
-//    }
+    clear();
+  }
+
+  public void clear()
+  {
+    try
+    {
+      prefs.clear();
+    } catch (Exception e)
+    {
+    }
   }
 
   public Preferences getPrefs()

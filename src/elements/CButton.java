@@ -132,6 +132,11 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     this.setForeground(Color.LIGHT_GRAY.darker());
   }
 
+  public boolean getSeen()
+  {
+    return element.getSeen();
+  }
+
   public String getPath()
   {
     return this.element.getPath();
