@@ -9,6 +9,8 @@ import elements.CButton;
 import elements.MediaElement;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 import javax.swing.tree.DefaultMutableTreeNode;
 import misc.Tuple;
@@ -93,7 +95,7 @@ public class FileWalker
         walk(f.getAbsolutePath(), node, setButtons.get(file));
       }
       else if ((file = isVideo(fileToString, file, Utils.EXTENSIONS)) != null)
-        if (!Prefs.getInstance().getPrefs().getBoolean(file.trim(), false))
+        if (!Prefs.getInstance().getPrefs().getBoolean(getStringHashcode(fileToString), false))
         {
           final CButton cButton = new CButton(
                   new MediaElement(file.trim(), fileToString,
@@ -103,9 +105,31 @@ public class FileWalker
           if (buttonsList != null)
             buttonsList.add(cButton);
           setButtons.get("All").add(cButton);
-          Prefs.getInstance().getPrefs().putBoolean(file.trim(), true);
+          Prefs.getInstance().getPrefs().putBoolean(getStringHashcode(fileToString), true);
         }
     }
+  }
+
+  public void removeUnexistingEntries()
+  {
+    for (Map.Entry<String, TreeSet<CButton>> entry : setButtons.entrySet())
+    {
+      TreeSet<CButton> treeSet = entry.getValue();
+      for (Iterator<CButton> it = treeSet.iterator(); it.hasNext();)
+      {
+        CButton cButton = it.next();
+        if (!new File(cButton.getPath()).exists())
+        {
+          Prefs.getInstance().getPrefs().remove(getStringHashcode(cButton.getPath()));
+          it.remove();
+        }
+      }
+    }
+  }
+
+  private static String getStringHashcode(final String fileToString)
+  {
+    return Integer.toString(fileToString.hashCode());
   }
 
   private String getCleanName(final String fileToString, String fileSeparator)

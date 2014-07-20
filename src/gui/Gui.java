@@ -120,7 +120,7 @@ public final class Gui extends JFrame
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        Prefs.getInstance().clear();
+        FileWalker.getInstance().removeUnexistingEntries();
         FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
                                           TreeExplorer.getInstance().getExplorerRoot());
         populateList("All");
