@@ -58,21 +58,7 @@ public final class Gui extends JFrame
     setLocationRelativeTo(null);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        if (FilePlayer.getSaver() != null && !FilePlayer.getSaver().isDone())
-          try
-          {
-            FilePlayer.getSaver().get();
-          } catch (InterruptedException | ExecutionException ex)
-          {
-            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
-          }
-      }
-    }));
+    shutdownHook();
 
     JSplitPane jSplitPane = splitPaneInit();
 
@@ -92,24 +78,47 @@ public final class Gui extends JFrame
 
     JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
 
-    DatabaseManager.load_database();
-    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
-                                      TreeExplorer.getInstance().getExplorerRoot());
-
     jScrollPane1.setViewportView(TreeExplorer.getInstance());
 
     jSplitPane.setLeftComponent(jScrollPane1);
 
     add(jSplitPane);
 
-    populateList("All");
-
     searchBar.setText(Prefs.getInstance().getPrefs().get("Last-Prefs-SearchBar", ""));
-    searchBar.getCaretListeners()[0].caretUpdate(null);
+    initDatabase(searchBar);
 
-    new DatabaseSaver().execute();
     pack();
     setVisible(true);
+  }
+
+  private void initDatabase(JTextField searchBar)
+  {
+    DatabaseManager.load_database();
+    FileWalker.getInstance().removeUnexistingEntries();
+    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
+                                      TreeExplorer.getInstance().getExplorerRoot());
+    populateList("All");
+    searchBar.getCaretListeners()[0].caretUpdate(null);
+    new DatabaseSaver().execute();
+  }
+
+  private void shutdownHook()
+  {
+    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        if (FilePlayer.getSaver() != null && !FilePlayer.getSaver().isDone())
+          try
+          {
+            FilePlayer.getSaver().get();
+          } catch (InterruptedException | ExecutionException ex)
+          {
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+          }
+      }
+    }));
   }
 
   private JButton refreshButtonInit(final JTextField searchBar)
@@ -120,13 +129,7 @@ public final class Gui extends JFrame
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        FileWalker.getInstance().removeUnexistingEntries();
-        FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
-                                          TreeExplorer.getInstance().getExplorerRoot());
-        populateList("All");
-        searchBar.getCaretListeners()[0].caretUpdate(null);
-
-        new DatabaseSaver().execute();
+        initDatabase(searchBar);
       }
     });
     return refresh;
