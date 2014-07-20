@@ -1030,8 +1030,6 @@ is divided into following sections:
       =================
   -->
   <target depends="init,compile" description="Run a main class." name="run">
-    <property environment="env"/>
-    <property name="_JAVA_OPTIONS" value="-Dawt.useSystemAAFontSettings=on"/>
     <j2seproject1:java>
       <customize>
         <arg line="${application.args}"/>

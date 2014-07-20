@@ -6,10 +6,7 @@
 package database;
 
 import elements.CButton;
-import java.awt.Desktop;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.TreeSet;
@@ -22,8 +19,6 @@ import listing.FileWalker;
  */
 public class DatabaseManager
 {
-
-  private static DatabaseSaver saver;
 
   static public boolean load_database()
   {
@@ -41,31 +36,5 @@ public class DatabaseManager
       return false;
     }
     return true;
-  }
-
-  public static void playFile(final CButton item)
-  {
-    String name = item.getPath();
-
-    try
-    {
-      if (System.getProperty("os.name").equals("Linux"))
-        Runtime.getRuntime().exec(new String[]
-        {
-          "bash", "-c", "vlc \"" + item.getPath() + "\""
-        });
-      else
-        Desktop.getDesktop().open(new File(name));
-    } catch (IOException exception)
-    {
-      System.err.println("Could not open: " + name + System.lineSeparator());
-    }
-
-    item.setSeen(true);
-
-    if (saver != null && !saver.isDone())
-      saver.cancel(true);
-    saver = new DatabaseSaver();
-    saver.execute();
   }
 }

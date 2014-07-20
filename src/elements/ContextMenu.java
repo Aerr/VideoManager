@@ -5,9 +5,10 @@
  */
 package elements;
 
-import database.DatabaseManager;
 import database.DatabaseSaver;
+import database.FilePlayer;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -17,21 +18,44 @@ import javax.swing.KeyStroke;
 
 class ContextMenu extends JPopupMenu
 {
+
   public ContextMenu(final CButton item)
   {
     setBorder(BorderFactory.createLineBorder(Color.black));
     final JMenuItem play = new JMenuItem("Play media");
-    play.setAccelerator(KeyStroke.getKeyStroke('P'));
+    play.setAccelerator(KeyStroke.getKeyStroke('p'));
     play.addActionListener(new ActionListener()
     {
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        DatabaseManager.playFile(item);
-        new DatabaseSaver().execute();
+        new FilePlayer(item).execute();
       }
     });
     add(play);
+
+    final JMenuItem playList = new JMenuItem("Play media and following");
+    playList.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        final Component[] components = item.getParent().getParent().getComponents();
+        int i = 0;
+        for (Component component : components)
+        {
+          if (component == item.getParent())
+            break;
+          i++;
+        }
+
+        final CButton[] files = new CButton[components.length - i];
+        for (int j = 0; i < components.length; i++, j++)
+          files[j] = (CButton) ((ButtonHolder) components[i]).getComponent(0);
+        new FilePlayer(files).execute();
+      }
+    });
+    add(playList);
 
     final JMenuItem seenToggle = new JMenuItem("Toggle seen");
     seenToggle.setAccelerator(KeyStroke.getKeyStroke('s'));

@@ -28,6 +28,7 @@ public class DatabaseSaver extends SwingWorker<Void, Void>
       }
     } catch (java.io.IOException e)
     {
+      e.printStackTrace();
     }
     return null;
   }

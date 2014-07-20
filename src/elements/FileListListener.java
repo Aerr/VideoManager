@@ -1,6 +1,6 @@
 package elements;
 
-import database.DatabaseManager;
+import database.FilePlayer;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -22,7 +22,7 @@ public class FileListListener extends MouseAdapter
     if (e.getButton() == MouseEvent.BUTTON1)
     {
       if (e.getClickCount() == 1)
-        DatabaseManager.playFile(item);
+        new FilePlayer(item).execute();
     }
     else
     {

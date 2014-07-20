@@ -2,6 +2,7 @@ package gui;
 
 import database.DatabaseManager;
 import database.DatabaseSaver;
+import database.FilePlayer;
 import elements.ButtonHolder;
 import elements.CButton;
 import java.awt.Color;
@@ -11,6 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -54,6 +58,22 @@ public final class Gui extends JFrame
     setLocationRelativeTo(null);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
+    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        if (FilePlayer.getSaver() != null && !FilePlayer.getSaver().isDone())
+          try
+          {
+            FilePlayer.getSaver().get();
+          } catch (InterruptedException | ExecutionException ex)
+          {
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+          }
+      }
+    }));
+
     JSplitPane jSplitPane = splitPaneInit();
 
     jPanel = new JPanel();
@@ -64,7 +84,7 @@ public final class Gui extends JFrame
     JTextField searchBar = searchBarInit();
 
     jMenuBar.add(searchBar);
-    JButton refresh = refreshButtonInit();
+    JButton refresh = refreshButtonInit(searchBar);
 
     jMenuBar.add(refresh);
 
@@ -92,7 +112,7 @@ public final class Gui extends JFrame
     setVisible(true);
   }
 
-  private JButton refreshButtonInit()
+  private JButton refreshButtonInit(final JTextField searchBar)
   {
     final JButton refresh = new JButton("Refresh");
     refresh.addActionListener(new ActionListener()
@@ -104,6 +124,8 @@ public final class Gui extends JFrame
         FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
                                           TreeExplorer.getInstance().getExplorerRoot());
         populateList("All");
+        searchBar.getCaretListeners()[0].caretUpdate(null);
+
         new DatabaseSaver().execute();
       }
     });
