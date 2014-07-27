@@ -36,6 +36,15 @@ public final class Gui extends JFrame
   private static final long serialVersionUID = 1L;
   private String currentFolder = "";
   private final JPanel jPanel;
+  private final JButton stopButton;
+
+  /**
+   * @return the stopButton
+   */
+  public JButton getStopButton()
+  {
+    return stopButton;
+  }
 
   private static class GuiHolder
   {
@@ -73,6 +82,19 @@ public final class Gui extends JFrame
     JButton refresh = refreshButtonInit(searchBar);
 
     jMenuBar.add(refresh);
+    stopButton = new JButton("Stop");
+
+    stopButton.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        FilePlayer.cancelCurrentPlayer();
+      }
+    });
+    stopButton.setVisible(false);
+
+    jMenuBar.add(stopButton);
 
     setJMenuBar(jMenuBar);
 
@@ -93,7 +115,9 @@ public final class Gui extends JFrame
 
   private void initDatabase(JTextField searchBar)
   {
-    DatabaseManager.load_database();
+    boolean load_database = DatabaseManager.load_database();
+    if (!load_database)
+      Prefs.getInstance().clear();
     FileWalker.getInstance().removeUnexistingEntries();
     FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
                                       TreeExplorer.getInstance().getExplorerRoot());

@@ -6,8 +6,11 @@
 
 package database;
 
+import gui.Gui;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 import javax.swing.SwingWorker;
 import listing.FileWalker;
@@ -26,9 +29,9 @@ public class DatabaseSaver extends SwingWorker<Void, Void>
         oos.writeObject(FileWalker.getInstance().getSetButtons());
         oos.flush();
       }
-    } catch (java.io.IOException e)
+    } catch (java.io.IOException ex)
     {
-      e.printStackTrace();
+      Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
     }
     return null;
   }

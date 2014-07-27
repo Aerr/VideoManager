@@ -6,9 +6,13 @@
 package database;
 
 import elements.CButton;
+import gui.Gui;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 /**
@@ -28,18 +32,30 @@ public class FilePlayer extends SwingWorker<Void, Void>
 
   private final CButton[] medias;
   private static DatabaseSaver saver;
+  private static FilePlayer currentPlayer;
+  private static boolean cancelPlayer;
 
   public FilePlayer(final CButton... medias)
   {
     super();
     this.medias = medias;
+    FilePlayer.cancelPlayer = false;
+    cancelPreviousPlayer();
   }
 
   @Override
   protected Void doInBackground() throws Exception
   {
+
+    currentPlayer = this;
+    if (medias.length > 1)
+      Gui.getInstance().getStopButton().setVisible(true);
+
     for (CButton item : medias)
     {
+      if (cancelPlayer)
+        break;
+
       String name = item.getPath();
 
       item.setSeen(true);
@@ -49,6 +65,9 @@ public class FilePlayer extends SwingWorker<Void, Void>
 
       saver = new DatabaseSaver();
       saver.execute();
+
+      if (cancelPlayer)
+        break;
 
       try
       {
@@ -71,10 +90,35 @@ public class FilePlayer extends SwingWorker<Void, Void>
     return null;
   }
 
+  private void cancelPreviousPlayer()
+  {
+    FilePlayer.cancelPlayer = true;
+    if (currentPlayer != null && !currentPlayer.isDone())
+    {
+      currentPlayer.cancel(false);
+      try
+      {
+        if (currentPlayer != null)
+          currentPlayer.get();
+      } catch (InterruptedException | ExecutionException ex)
+      {
+        Logger.getLogger(FilePlayer.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+    FilePlayer.cancelPlayer = false;
+  }
+
+  public static void cancelCurrentPlayer()
+  {
+    cancelPlayer = true;
+    Gui.getInstance().getStopButton().setVisible(false);
+  }
+
   @Override
   protected void done()
   {
     super.done();
-
+    currentPlayer = null;
+    Gui.getInstance().getStopButton().setVisible(false);
   }
 }
