@@ -188,13 +188,19 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
   @Override
   public void writeExternal(ObjectOutput out) throws IOException
   {
-    out.writeObject(this.element);
+    if (this.isVisible())
+      out.writeObject(this.element);
+    else
+      out.writeObject(null);
   }
 
   @Override
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
   {
     this.element = (MediaElement) in.readObject();
-    initialize();
+    if (this.element == null)
+      this.setVisible(false);
+    else
+      initialize();
   }
 }

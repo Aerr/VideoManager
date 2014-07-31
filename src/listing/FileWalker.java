@@ -118,11 +118,12 @@ public class FileWalker
       for (Iterator<CButton> it = treeSet.iterator(); it.hasNext();)
       {
         CButton cButton = it.next();
-        if (!new File(cButton.getPath()).exists())
-        {
-          Prefs.getInstance().getPrefs().remove(getStringHashcode(cButton.getPath()));
-          it.remove();
-        }
+        if (cButton.isVisible())
+          if (!new File(cButton.getPath()).exists())
+          {
+            Prefs.getInstance().getPrefs().remove(getStringHashcode(cButton.getPath()));
+            it.remove();
+          }
       }
     }
   }

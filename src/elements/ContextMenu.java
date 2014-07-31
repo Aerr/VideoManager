@@ -13,6 +13,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -34,7 +35,7 @@ class ContextMenu extends JPopupMenu
     renameButton(item);
 
     add(new JMenuItem("Change image"));
-    add(new JMenuItem("Remove"));
+    removeButton(item);
   }
 
   private void renameButton(final CButton item)
@@ -55,6 +56,32 @@ class ContextMenu extends JPopupMenu
       }
     });
     add(renameItem);
+  }
+
+  private void removeButton(final CButton item)
+  {
+    JMenuItem removeItem = new JMenuItem("Remove");;
+    removeItem.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        String text = "<html><p>Are you sure you want to remove this media from your library?</p>"
+                      + "<p><font size=-2>(The file will not be removed from your drive)</font></p></html>";
+
+        int confirmation = JOptionPane.showConfirmDialog(null, new JLabel(text),
+                                                         "Confirm", JOptionPane.OK_CANCEL_OPTION);
+        if (confirmation == JOptionPane.OK_OPTION)
+        {
+          item.setVisible(false);
+          Gui.getInstance().updateSearchBar();
+          new DatabaseSaver().execute();
+        }
+      }
+    }
+    );
+
+    add(removeItem);
   }
 
   private void seenButton(final CButton item)

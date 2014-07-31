@@ -37,6 +37,7 @@ public final class Gui extends JFrame
   private String currentFolder = "";
   private final JPanel jPanel;
   private final JButton stopButton;
+  private final JTextField searchBar;
 
   /**
    * @return the stopButton
@@ -76,10 +77,10 @@ public final class Gui extends JFrame
     jSplitPane.setRightComponent(mediaGrid);
 
     JMenuBar jMenuBar = new JMenuBar();
-    JTextField searchBar = searchBarInit();
+    searchBar = searchBarInit();
 
     jMenuBar.add(searchBar);
-    JButton refresh = refreshButtonInit(searchBar);
+    JButton refresh = refreshButtonInit();
 
     jMenuBar.add(refresh);
     stopButton = new JButton("Stop");
@@ -107,13 +108,13 @@ public final class Gui extends JFrame
     add(jSplitPane);
 
     searchBar.setText(Prefs.getInstance().getPrefs().get("Last-Prefs-SearchBar", ""));
-    initDatabase(searchBar);
+    initDatabase();
 
     pack();
     setVisible(true);
   }
 
-  private void initDatabase(JTextField searchBar)
+  private void initDatabase()
   {
     boolean load_database = DatabaseManager.load_database();
     if (!load_database)
@@ -122,8 +123,13 @@ public final class Gui extends JFrame
     FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
                                       TreeExplorer.getInstance().getExplorerRoot());
     populateList("All");
-    searchBar.getCaretListeners()[0].caretUpdate(null);
+    updateSearchBar();
     new DatabaseSaver().execute();
+  }
+
+  public void updateSearchBar()
+  {
+    searchBar.getCaretListeners()[0].caretUpdate(null);
   }
 
   private void shutdownHook()
@@ -145,7 +151,7 @@ public final class Gui extends JFrame
     }));
   }
 
-  private JButton refreshButtonInit(final JTextField searchBar)
+  private JButton refreshButtonInit()
   {
     final JButton refresh = new JButton("Refresh");
     refresh.addActionListener(new ActionListener()
@@ -153,7 +159,7 @@ public final class Gui extends JFrame
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        initDatabase(searchBar);
+        initDatabase();
       }
     });
     return refresh;
@@ -161,15 +167,15 @@ public final class Gui extends JFrame
 
   private JTextField searchBarInit()
   {
-    final JTextField searchBar = new JTextField();
-    searchBar.addCaretListener(new CaretListener()
+    final JTextField searchBarItem = new JTextField();
+    searchBarItem.addCaretListener(new CaretListener()
     {
 
       @Override
       public void caretUpdate(CaretEvent arg0)
       {
         TreeSet<CButton> get = FileWalker.getInstance().getSetButtons().get(currentFolder);
-        if (searchBar.getText().equals(""))
+        if (searchBarItem.getText().equals(""))
           populateList(get);
 
         get = new TreeSet(get);
@@ -177,16 +183,16 @@ public final class Gui extends JFrame
         {
           CButton cButton = it.next();
           if (!cButton.toString().toLowerCase().contains(
-                  searchBar.getText().toLowerCase()))
+                  searchBarItem.getText().toLowerCase()))
             it.remove();
         }
 
         populateList(get);
 
-        Prefs.getInstance().getPrefs().put("Last-Prefs-SearchBar", searchBar.getText());
+        Prefs.getInstance().getPrefs().put("Last-Prefs-SearchBar", searchBarItem.getText());
       }
     });
-    return searchBar;
+    return searchBarItem;
   }
 
   private JScrollPane mediaGridInit()
@@ -230,12 +236,19 @@ public final class Gui extends JFrame
     currentFolder = folder;
   }
 
+  public void reloadList()
+  {
+    final TreeSet<CButton> files = FileWalker.getInstance().getSetButtons().get(currentFolder);
+    populateList(files);
+  }
+
   private void populateList(final TreeSet<CButton> files)
   {
     jPanel.removeAll();
 
     for (CButton cButton : files)
-      jPanel.add(new ButtonHolder(cButton));
+      if (cButton.isVisible())
+        jPanel.add(new ButtonHolder(cButton));
 
     revalidate();
 
