@@ -126,6 +126,18 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     }
   }
 
+  public String getMediaName()
+  {
+    return element.getName();
+  }
+
+  public void setMediaName(String name)
+  {
+    element.setName(name);
+    this.setText(element.getName());
+    this.setToolTipText(this.element.getName());
+  }
+
   public void setSeen()
   {
     this.setSeen(element.getSeen());

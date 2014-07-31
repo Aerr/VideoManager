@@ -3,10 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/aerr/NetBeansProjects/VideoManager/src/database/DatabaseManager.java</file>
-            <file>file:/home/aerr/NetBeansProjects/VideoManager/src/database/FilePlayer.java</file>
-            <file>file:/home/aerr/NetBeansProjects/VideoManager/src/gui/Gui.java</file>
-            <file>file:/home/aerr/NetBeansProjects/VideoManager/src/database/DatabaseSaver.java</file>
+            <file>file:/home/aerr/NetBeansProjects/VideoManager/src/elements/ContextMenu.java</file>
         </group>
     </open-files>
 </project-private>

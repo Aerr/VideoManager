@@ -74,6 +74,14 @@ public class MediaElement implements Externalizable
   }
 
   /**
+   * @param name the name to set
+   */
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+
+  /**
    * @return the parentFolder
    */
   public String getParentFolder()
