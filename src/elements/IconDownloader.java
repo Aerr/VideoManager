@@ -24,13 +24,6 @@ public class IconDownloader extends SwingWorker<Void, Void>
   @Override
   protected Void doInBackground() throws Exception
   {
-    File f = new File("thumbs/" + button.getText().hashCode() + ".jpg");
-    if (f.exists() && !f.isDirectory())
-    {
-      button.setImage(ImageIO.read(f), false);
-      return null;
-    }
-
     InputStream is = null;
     StringBuilder res = new StringBuilder();
     try
