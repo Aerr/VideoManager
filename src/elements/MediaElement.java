@@ -9,36 +9,32 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import javax.swing.ImageIcon;
 
-public class MediaElement implements Externalizable
+public class MediaElement implements Comparable<MediaElement>, Externalizable
 {
   private static final long serialVersionUID = 1L;
 
   private String name;
   private String path;
-  private String parentFolder;
   private String tag;
   private boolean seen;
-  private ImageIcon icon;
+  private boolean visible;
 
   public MediaElement()
   {
   }
 
-  public MediaElement(String name, String path, String parentFolder, String tag, boolean seen)
+  public MediaElement(String name, String path, String tag, boolean seen)
   {
     this.name = name;
     this.path = path;
-    this.parentFolder = parentFolder;
     this.tag = tag;
     this.seen = seen;
-    this.icon = null;
   }
 
-  public MediaElement(String name, String path, String parentFolder, boolean seen)
+  public MediaElement(String name, String path, boolean seen)
   {
-    this(name, path, parentFolder, "", seen);
+    this(name, path, "", seen);
   }
 
   /**
@@ -81,23 +77,14 @@ public class MediaElement implements Externalizable
     this.name = name;
   }
 
-  /**
-   * @return the parentFolder
-   */
-  public String getParentFolder()
-  {
-    return parentFolder;
-  }
-
   @Override
   public void writeExternal(ObjectOutput out) throws IOException
   {
     out.writeObject(name);
     out.writeObject(path);
-    out.writeObject(parentFolder);
     out.writeObject(tag);
     out.writeBoolean(seen);
-    out.writeObject(icon);
+    out.writeBoolean(visible);
   }
 
   @Override
@@ -105,25 +92,34 @@ public class MediaElement implements Externalizable
   {
     this.name = (String) in.readObject();
     this.path = (String) in.readObject();
-    this.parentFolder = (String) in.readObject();
     this.tag = (String) in.readObject();
     this.seen = in.readBoolean();
-    this.icon = (ImageIcon) in.readObject();
+    this.visible = in.readBoolean();
   }
 
   /**
-   * @return the icon
+   * @return the visible
    */
-  public ImageIcon getIcon()
+  public boolean getVisible()
   {
-    return icon;
+    return visible;
   }
 
-  /**
-   * @param icon the icon to set
-   */
-  public void setIcon(ImageIcon icon)
+  @Override
+  public int compareTo(MediaElement o)
   {
-    this.icon = icon;
+    final int compareTo = this.name.compareTo(o.getName());
+
+    if (this != o && compareTo == 0)
+      return this.name.compareTo(o.getName());
+    else
+      return compareTo;
   }
+
+  @Override
+  public String toString()
+  {
+    return name;
+  }
+
 }

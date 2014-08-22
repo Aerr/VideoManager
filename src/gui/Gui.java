@@ -7,7 +7,6 @@ import elements.ButtonHolder;
 import elements.CButton;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -16,16 +15,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import listing.FileWalker;
 import listing.Prefs;
 import misc.Utils;
@@ -34,7 +33,6 @@ public final class Gui extends JFrame
 {
 
   private static final long serialVersionUID = 1L;
-  private String currentFolder = "";
   private final JPanel jPanel;
   private final JButton stopButton;
   private final JTextField searchBar;
@@ -70,11 +68,8 @@ public final class Gui extends JFrame
 
     shutdownHook();
 
-    JSplitPane jSplitPane = splitPaneInit();
-
     jPanel = new JPanel();
     final JScrollPane mediaGrid = mediaGridInit();
-    jSplitPane.setRightComponent(mediaGrid);
 
     JMenuBar jMenuBar = new JMenuBar();
     searchBar = searchBarInit();
@@ -99,13 +94,7 @@ public final class Gui extends JFrame
 
     setJMenuBar(jMenuBar);
 
-    JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
-
-    jScrollPane1.setViewportView(TreeExplorer.getInstance());
-
-    jSplitPane.setLeftComponent(jScrollPane1);
-
-    add(jSplitPane);
+    add(mediaGrid);
 
     searchBar.setText(Prefs.getInstance().getPrefs().get("Last-Prefs-SearchBar", ""));
     initDatabase();
@@ -120,9 +109,8 @@ public final class Gui extends JFrame
     if (!load_database)
       Prefs.getInstance().clear();
     FileWalker.getInstance().removeUnexistingEntries();
-    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/",
-                                      TreeExplorer.getInstance().getExplorerRoot());
-    populateList("All");
+    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/");
+    reloadList();
     updateSearchBar();
     new DatabaseSaver().execute();
   }
@@ -174,7 +162,7 @@ public final class Gui extends JFrame
       @Override
       public void caretUpdate(CaretEvent arg0)
       {
-        TreeSet<CButton> get = FileWalker.getInstance().getSetButtons().get(currentFolder);
+        TreeSet<CButton> get = FileWalker.getInstance().getSetButtons();
         if (searchBarItem.getText().equals(""))
           populateList(get);
 
@@ -198,13 +186,10 @@ public final class Gui extends JFrame
   private JScrollPane mediaGridInit()
   {
     jPanel.setBackground(new Color(39, 39, 39));
-    final GridLayout gridLayout = new GridLayout(0, 4);
-    gridLayout.setVgap(Utils.GUI_VGAP);
-    gridLayout.setHgap(Utils.GUI_HGAP);
+    BoxLayout layout = new BoxLayout(jPanel, BoxLayout.PAGE_AXIS);
+    jPanel.setLayout(layout);
     jPanel.setBorder(BorderFactory.createEmptyBorder(Utils.GUI_INSET, Utils.GUI_INSET / 2,
                                                      Utils.GUI_INSET, Utils.GUI_INSET / 2));
-    jPanel.setLayout(gridLayout);
-    addComponentListener(new MainComponentListener(this, gridLayout));
 
     final JScrollPane jScrollPane = new JScrollPane(jPanel);
     jScrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -213,32 +198,9 @@ public final class Gui extends JFrame
     return jScrollPane;
   }
 
-  private JSplitPane splitPaneInit()
-  {
-    JSplitPane jSplitPane = new javax.swing.JSplitPane();
-    jSplitPane.setOneTouchExpandable(true);
-    jSplitPane.setDividerLocation(110);
-    jSplitPane.setDividerSize(9);
-    jSplitPane.setUI(new BasicSplitPaneUI());
-    return jSplitPane;
-  }
-
-  public void populateList(String folder)
-  {
-    if (currentFolder.equals(folder))
-      return;
-
-    final TreeSet<CButton> files = FileWalker.getInstance().getSetButtons().get(folder);
-    if (files == null)
-      return;
-
-    populateList(files);
-    currentFolder = folder;
-  }
-
   public void reloadList()
   {
-    final TreeSet<CButton> files = FileWalker.getInstance().getSetButtons().get(currentFolder);
+    final TreeSet<CButton> files = FileWalker.getInstance().getSetButtons();
     populateList(files);
   }
 
@@ -247,20 +209,21 @@ public final class Gui extends JFrame
     jPanel.removeAll();
 
     for (CButton cButton : files)
+    {
       if (cButton.isVisible())
         jPanel.add(new ButtonHolder(cButton));
-
+      jPanel.add(Box.createRigidArea(new Dimension(65, 65)));
+    }
     revalidate();
 
-    final int columns = ((GridLayout) jPanel.getLayout()).getColumns();
-    if (jPanel.getComponentCount() > 0)
-      while (jPanel.getComponent(0).getSize().height > Utils.ICON_DIMENSION.height)
-      {
-        for (int i = 0; i < columns; i++)
-          jPanel.add(new ButtonHolder());
-        revalidate();
-      }
-
+//    final int columns = ((GridLayout) jPanel.getLayout()).getColumns();
+//    if (jPanel.getComponentCount() > 0)
+//      while (jPanel.getComponent(0).getSize().height > Utils.ICON_DIMENSION.height)
+//      {
+//        for (int i = 0; i < columns; i++)
+//          jPanel.add(new ButtonHolder());
+//        revalidate();
+//      }
     repaint();
   }
 }

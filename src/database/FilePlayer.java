@@ -5,7 +5,7 @@
  */
 package database;
 
-import elements.CButton;
+import elements.MediaElement;
 import gui.Gui;
 import java.awt.Desktop;
 import java.io.File;
@@ -30,12 +30,12 @@ public class FilePlayer extends SwingWorker<Void, Void>
     return saver;
   }
 
-  private final CButton[] medias;
+  private final MediaElement[] medias;
   private static DatabaseSaver saver;
   private static FilePlayer currentPlayer;
   private static boolean cancelPlayer;
 
-  public FilePlayer(final CButton... medias)
+  public FilePlayer(final MediaElement... medias)
   {
     super();
     this.medias = medias;
@@ -51,7 +51,7 @@ public class FilePlayer extends SwingWorker<Void, Void>
     if (medias.length > 1)
       Gui.getInstance().getStopButton().setVisible(true);
 
-    for (CButton item : medias)
+    for (MediaElement item : medias)
     {
       if (cancelPlayer)
         break;

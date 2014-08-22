@@ -1,17 +1,13 @@
 package elements;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.Externalizable;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import javax.imageio.ImageIO;
+import java.util.TreeSet;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
@@ -21,18 +17,22 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
 {
 
   private static final long serialVersionUID = 1L;
-  MediaElement element;
+
+  private TreeSet<MediaElement> medias;
+  private String name;
 
   public CButton()
   {
     super();
+    medias = new TreeSet<>();
+    this.name = "Loading...";
   }
 
-  public CButton(MediaElement element)
+  public CButton(String name)
   {
     super();
-    this.element = element;
-
+    medias = new TreeSet<>();
+    this.name = name;
     initialize();
   }
 
@@ -42,17 +42,11 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     setBackground(null);
     setBorder(null);
 
-    if (element != null)
+    if (name != null)
     {
-      this.setText(element.getName());
-      this.setToolTipText(this.element.getName());
-
-      setSeen();
-      this.setIcon(element.getIcon());
-
+      this.setText(name);
+      this.setToolTipText(name);
     }
-    if (this.getIcon() == null)
-      new IconDownloader(this).execute();
 
     setVerticalTextPosition(SwingConstants.BOTTOM);
     setHorizontalTextPosition(SwingConstants.CENTER);
@@ -64,108 +58,21 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
 
   }
 
-  public void setImage(BufferedImage newImage, boolean isNew)
+  public void downloadIcon()
+  {
+    if (this.getIcon() == null)
+      new IconDownloader(this).execute();
+  }
+
+  public void setImage(BufferedImage newImage)
   {
     if (newImage != null)
     {
-      if (isNew)
-      {
-        Dimension dim = getRatio(newImage.getWidth(), newImage.getHeight());
-
-        BufferedImage image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2 = image.createGraphics();
-
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        g2.drawImage(newImage, 0, 0, dim.width, dim.height, null);
-        g2.dispose();
-
-//        saveFile("thumbs/" + getText().hashCode(), image);
-        element.setIcon(new ImageIcon(image));
-      }
-      else
-        element.setIcon(new ImageIcon(newImage));
-
-      this.setIcon(element.getIcon());
+      this.setIcon(new ImageIcon(newImage));
 
       revalidate();
       repaint();
     }
-  }
-
-  public void saveFile(final String filename, final BufferedImage image)
-  {
-    File file = new File(filename + ".jpg");
-    try
-    {
-      ImageIO.write(image, "jpg", file);
-    } catch (IOException e)
-    {
-    }
-  }
-
-  private Dimension getRatio(int imageWidth, int imageHeight)
-  {
-    float ratio = (float) imageHeight / (float) imageWidth;
-    int height = getMaximumSize().height - 25;
-    int width = (int) (height / ratio);
-
-    return new Dimension(width, height);
-  }
-
-  @Override
-  protected void paintComponent(Graphics g)
-  {
-    super.paintComponent(g);
-    if (element.getSeen())
-    {
-      g.setColor(new Color(255, 255, 255, 128));
-      g.fillRect(0, 1, getWidth(), getHeight() - 22);
-    }
-  }
-
-  public String getMediaName()
-  {
-    return element.getName();
-  }
-
-  public void setMediaName(String name)
-  {
-    element.setName(name);
-    this.setText(element.getName());
-    this.setToolTipText(this.element.getName());
-  }
-
-  public void setSeen()
-  {
-    this.setSeen(element.getSeen());
-  }
-
-  public void setSeen(boolean isSeen)
-  {
-    element.setSeen(isSeen);
-
-    if (isSeen)
-      this.setForeground(Color.LIGHT_GRAY.darker());
-    else
-      this.setForeground(Color.LIGHT_GRAY);
-  }
-
-  public boolean getSeen()
-  {
-    return element.getSeen();
-  }
-
-  public String getPath()
-  {
-    return this.element.getPath();
-  }
-
-  public String getParentFolder()
-  {
-    return this.element.getParentFolder();
   }
 
   @Override
@@ -180,7 +87,7 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     final int compareTo = this.getText().compareTo(o.getText());
 
     if (this != o && compareTo == 0)
-      return this.getPath().compareTo(o.getPath());
+      return this.name.compareTo(o.getText());
     else
       return compareTo;
   }
@@ -188,19 +95,30 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
   @Override
   public void writeExternal(ObjectOutput out) throws IOException
   {
-    if (this.isVisible())
-      out.writeObject(this.element);
-    else
-      out.writeObject(null);
+    out.writeObject(name);
+    out.writeObject(this.getIcon());
+    out.writeObject(medias);
   }
 
   @Override
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
   {
-    this.element = (MediaElement) in.readObject();
-    if (this.element == null)
-      this.setVisible(false);
-    else
-      initialize();
+    name = (String) in.readObject();
+    this.setIcon((Icon) in.readObject());
+    medias = (TreeSet<MediaElement>) in.readObject();
+    initialize();
+  }
+
+  public void addMedia(String name, String path)
+  {
+    getMedias().add(new MediaElement(name, path, getName(), false));
+  }
+
+  /**
+   * @return the medias
+   */
+  public TreeSet<MediaElement> getMedias()
+  {
+    return medias;
   }
 }

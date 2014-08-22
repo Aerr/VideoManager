@@ -8,9 +8,7 @@ package listing;
 import elements.CButton;
 import elements.MediaElement;
 import java.io.File;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.TreeSet;
 import javax.swing.tree.DefaultMutableTreeNode;
 import misc.Tuple;
@@ -23,11 +21,11 @@ import misc.Utils;
 public class FileWalker
 {
 
-  private HashMap<String, TreeSet<CButton>> setButtons;
+  private TreeSet<CButton> setButtons;
 
   private FileWalker()
   {
-    setButtons = new HashMap();
+    setButtons = new TreeSet();
   }
 
   public static FileWalker getInstance()
@@ -38,7 +36,7 @@ public class FileWalker
   /**
    * @return the setButtons
    */
-  public HashMap<String, TreeSet<CButton>> getSetButtons()
+  public TreeSet<CButton> getSetButtons()
   {
     return setButtons;
   }
@@ -46,7 +44,7 @@ public class FileWalker
   /**
    * @param setButtons the setButtons to set
    */
-  public void setSetButtons(HashMap<String, TreeSet<CButton>> setButtons)
+  public void setSetButtons(TreeSet<CButton> setButtons)
   {
     this.setButtons = setButtons;
   }
@@ -57,21 +55,14 @@ public class FileWalker
     private static final FileWalker INSTANCE = new FileWalker();
   }
 
-  public TreeSet<CButton> getFiles(String path, DefaultMutableTreeNode treeRoot)
+  public TreeSet<CButton> getFiles(String path)
   {
-    putNew("All");
     new File("thumbs").mkdirs();
-    walk(path, treeRoot, null);
-    return setButtons.get("All");
+    walk(path, null);
+    return setButtons;
   }
 
-  private void putNew(final String newKey)
-  {
-    if (setButtons.get(newKey) == null)
-      setButtons.put(newKey, new TreeSet<CButton>());
-  }
-
-  protected void walk(String path, DefaultMutableTreeNode treeRoot, TreeSet<CButton> buttonsList)
+  protected void walk(String path, CButton buttonsList)
   {
     File rootFolder = new File(path);
     File[] list = rootFolder.listFiles();
@@ -88,23 +79,30 @@ public class FileWalker
       String file = getCleanName(fileToString, fileSeparator);
 
       if (f.isDirectory())
-      {
-        final DefaultMutableTreeNode node = new DefaultMutableTreeNode(new Tuple(file, f.getAbsolutePath()));
-        treeRoot.add(node);
-        putNew(file);
-        walk(f.getAbsolutePath(), node, setButtons.get(file));
-      }
+        if (buttonsList == null)
+        {
+          final CButton cButton = new CButton(file);
+          walk(f.getAbsolutePath(), cButton);
+          if (cButton.getMedias().size() > 0)
+          {
+            setButtons.add(cButton);
+            cButton.downloadIcon();
+          }
+        }
+        else
+          walk(f.getAbsolutePath(), buttonsList);
       else if ((file = isVideo(fileToString, file, Utils.EXTENSIONS)) != null)
         if (!Prefs.getInstance().getPrefs().getBoolean(getStringHashcode(fileToString), false))
         {
-          final CButton cButton = new CButton(
-                  new MediaElement(file.trim(), fileToString,
-                                   getCleanName((String) rootToTuple(treeRoot).y, fileSeparator),
-                                   false));
+          if (buttonsList == null)
+          {
+            final CButton cButton = new CButton(file);
+            cButton.addMedia(file.trim(), fileToString);
+            setButtons.add(cButton);
+          }
+          else
+            buttonsList.addMedia(file.trim(), fileToString);
 
-          if (buttonsList != null)
-            buttonsList.add(cButton);
-          setButtons.get("All").add(cButton);
           Prefs.getInstance().getPrefs().putBoolean(getStringHashcode(fileToString), true);
         }
     }
@@ -112,19 +110,22 @@ public class FileWalker
 
   public void removeUnexistingEntries()
   {
-    for (Map.Entry<String, TreeSet<CButton>> entry : setButtons.entrySet())
+    for (Iterator<CButton> it = setButtons.iterator(); it.hasNext();)
     {
-      TreeSet<CButton> treeSet = entry.getValue();
-      for (Iterator<CButton> it = treeSet.iterator(); it.hasNext();)
+      CButton cButton = it.next();
+      for (Iterator<MediaElement> it1 = cButton.getMedias().iterator(); it1.hasNext();)
       {
-        CButton cButton = it.next();
-        if (cButton.isVisible())
-          if (!new File(cButton.getPath()).exists())
+        MediaElement mediaElement = it1.next();
+        if (mediaElement.getVisible())
+          if (!new File(mediaElement.getPath()).exists())
           {
-            Prefs.getInstance().getPrefs().remove(getStringHashcode(cButton.getPath()));
-            it.remove();
+            Prefs.getInstance().getPrefs().remove(getStringHashcode(mediaElement.getPath()));
+            it1.remove();
           }
       }
+
+      if (cButton.getMedias().size() == 0)
+        it.remove();
     }
   }
 
