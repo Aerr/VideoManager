@@ -1,12 +1,15 @@
 package elements;
 
+import actions.PlayAction;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.util.TreeSet;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 
 public class ButtonHolder extends JPanel
 {
@@ -52,9 +55,13 @@ public class ButtonHolder extends JPanel
     table.setBackground(null);
 
     this.add(table, BorderLayout.CENTER);
-    final CCellEditor cCellEditor = new CCellEditor(table, medias.toArray());
+    final Object[] mediasArray = medias.toArray();
+    final CCellEditor cCellEditor = new CCellEditor(table, mediasArray);
     table.getColumnModel().getColumn(0).setCellEditor(cCellEditor);
     table.getColumnModel().getColumn(0).setCellRenderer(new CCellRenderer());
+
+    table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "play");
+    table.getActionMap().put("play", new PlayAction(mediasArray));
 
     table.addMouseListener(cCellEditor);
 

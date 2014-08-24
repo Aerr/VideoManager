@@ -46,6 +46,14 @@ public class ContextMenu extends JPopupMenu
     Utils.setCurrentContextMenu(this);
   }
 
+  @Override
+  protected void firePopupMenuWillBecomeInvisible()
+  {
+    super.firePopupMenuWillBecomeInvisible();
+    refreshTable();
+  }
+
+
   private void renameButton()
   {
     JMenuItem renameItem = new JMenuItem("Rename");
@@ -54,14 +62,9 @@ public class ContextMenu extends JPopupMenu
       @Override
       public void actionPerformed(ActionEvent evt)
       {
-        String name = JOptionPane.showInputDialog(Gui.getInstance(),
-                                                  "Rename the media?", media.getName());
-        if (name != null)
-        {
-          media.setName(name);
-          refreshTable();
-          new DatabaseSaver().execute();
-        }
+        table.editCellAt(table.getSelectedRow(), 0);
+        if (table.getEditorComponent() != null)
+          table.getEditorComponent().requestFocus();
       }
     });
     add(renameItem);

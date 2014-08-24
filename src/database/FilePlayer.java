@@ -21,7 +21,6 @@ import javax.swing.SwingWorker;
  */
 public class FilePlayer extends SwingWorker<Void, Void>
 {
-
   /**
    * @return the saver
    */

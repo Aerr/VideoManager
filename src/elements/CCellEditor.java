@@ -5,6 +5,7 @@
  */
 package elements;
 
+import database.DatabaseSaver;
 import database.FilePlayer;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -33,17 +34,29 @@ public class CCellEditor extends DefaultCellEditor implements MouseListener
   @Override
   public boolean isCellEditable(EventObject anEvent)
   {
+    // Normally: from context menu -> Rename
+    if (anEvent == null)
+      return true;
+    // Normally: from F2 press
     if (anEvent.getClass() == java.awt.event.ActionEvent.class)
       return true;
+
     if (anEvent.getClass() == MouseEvent.class)
     {
       MouseEvent e = (MouseEvent) anEvent;
-      if (e.getClickCount() == 3)
-        return true;
-      else if (e.getClickCount() == 2)
+      if (e.getClickCount() == 2)
         new FilePlayer(getSelected()).execute();
     }
     return false;
+  }
+
+  @Override
+  protected void fireEditingStopped()
+  {
+    super.fireEditingStopped();
+    final String newName = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
+    getSelected().setName(newName);
+    new DatabaseSaver().execute();
   }
 
   private MediaElement getSelected()
