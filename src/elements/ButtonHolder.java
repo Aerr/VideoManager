@@ -1,6 +1,7 @@
 package elements;
 
 import actions.PlayAction;
+import actions.SeenToggleAction;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -62,6 +63,9 @@ public class ButtonHolder extends JPanel
 
     table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "play");
     table.getActionMap().put("play", new PlayAction(mediasArray));
+
+    table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "toggleSeen");
+    table.getActionMap().put("toggleSeen", new SeenToggleAction(mediasArray));
 
     table.addMouseListener(cCellEditor);
 

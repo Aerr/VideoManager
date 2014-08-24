@@ -111,7 +111,7 @@ public class ContextMenu extends JPopupMenu
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        getMedia().setSeen(!media.getSeen());
+        getMedia().toggleSeen();
         refreshTable();
         new DatabaseSaver().execute();
       }
@@ -137,7 +137,7 @@ public class ContextMenu extends JPopupMenu
   private void playButton()
   {
     final JMenuItem play = new JMenuItem("Play media");
-    play.setAccelerator(KeyStroke.getKeyStroke('p'));
+    play.setAccelerator(KeyStroke.getKeyStroke("Enter"));
     play.addActionListener(new ActionListener()
     {
       @Override

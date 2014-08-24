@@ -55,6 +55,11 @@ public class MediaElement implements Comparable<MediaElement>, Externalizable
     this.seen = seen;
   }
 
+  public void toggleSeen()
+  {
+    seen = !seen;
+  }
+
   /**
    * @return the path
    */

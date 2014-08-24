@@ -5,17 +5,16 @@
  */
 package actions;
 
-import database.FilePlayer;
+import elements.MediaElement;
 import javax.swing.JTable;
 
 /**
  *
  * @author aerr
  */
-public class PlayAction extends CAbstractAction
+public class SeenToggleAction extends CAbstractAction
 {
-
-  public PlayAction(Object[] mediasArray)
+  public SeenToggleAction(Object[] mediasArray)
   {
     super(mediasArray);
   }
@@ -23,7 +22,10 @@ public class PlayAction extends CAbstractAction
   @Override
   public void actionPerformed(JTable table)
   {
-    new FilePlayer(getSelected(table)).execute();
+    final MediaElement[] selected = getSelected(table);
+    boolean toSet = !selected[0].getSeen();
+    for (MediaElement media : selected)
+      media.setSeen(toSet);
   }
 
 }
