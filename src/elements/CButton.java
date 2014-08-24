@@ -106,12 +106,14 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     name = (String) in.readObject();
     this.setIcon((Icon) in.readObject());
     medias = (TreeSet<MediaElement>) in.readObject();
+    for (MediaElement mediaElement : medias)
+      mediaElement.setParent(this);
     initialize();
   }
 
   public void addMedia(String name, String path)
   {
-    getMedias().add(new MediaElement(name, path, getName(), false));
+    getMedias().add(new MediaElement(name, path, getName(), false, this));
   }
 
   /**

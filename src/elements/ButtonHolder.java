@@ -54,6 +54,9 @@ public class ButtonHolder extends JPanel
     this.add(table, BorderLayout.CENTER);
     final CCellEditor cCellEditor = new CCellEditor(table, medias.toArray());
     table.getColumnModel().getColumn(0).setCellEditor(cCellEditor);
+    table.getColumnModel().getColumn(0).setCellRenderer(new CCellRenderer());
+
+    table.addMouseListener(cCellEditor);
 
     JPanel holder = new JPanel();
     holder.setBackground(null);

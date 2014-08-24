@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
+import javax.swing.plaf.BorderUIResource;
 import javax.swing.plaf.FontUIResource;
 
 /**
@@ -23,6 +24,8 @@ public class CustomUIManager
 
   public static void setUIFont()
   {
+    UIManager.put("Table.focusCellHighlightBorder", new BorderUIResource.EmptyBorderUIResource(1, 1, 1, 1));
+
     Font createFont;
     try
     {

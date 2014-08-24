@@ -5,6 +5,8 @@
  */
 package misc;
 
+import elements.ContextMenu;
+import elements.MediaElement;
 import java.awt.Dimension;
 
 /**
@@ -27,6 +29,7 @@ public class Utils
   {
     ".avi", ".mkv", ".mp4"
   };
+  private static ContextMenu currentContextMenu;
 
   public static String getPrefix(String src, String... delimiter)
   {
@@ -48,5 +51,31 @@ public class Utils
         i = (i == -1) ? lastIndexOf : Math.min(i, lastIndexOf);
     }
     return i;
+  }
+
+  /**
+   * @return the currentContextMenu
+   */
+  public static ContextMenu getCurrentContextMenu()
+  {
+    return currentContextMenu;
+  }
+
+  public static boolean isContextMenuDisplayed()
+  {
+    return currentContextMenu != null && currentContextMenu.isVisible();
+  }
+
+  public static boolean isContextMenuDisplayed(MediaElement media)
+  {
+    return currentContextMenu != null && currentContextMenu.isVisible() && currentContextMenu.getMedia() == media;
+  }
+
+  /**
+   * @param aCurrentContextMenu the currentContextMenu to set
+   */
+  public static void setCurrentContextMenu(ContextMenu aCurrentContextMenu)
+  {
+    currentContextMenu = aCurrentContextMenu;
   }
 }

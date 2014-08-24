@@ -6,6 +6,7 @@
 package elements;
 
 import database.DatabaseSaver;
+import database.FilePlayer;
 import gui.Gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -15,47 +16,64 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
+import misc.Utils;
 
-class ContextMenu extends JPopupMenu
+public class ContextMenu extends JPopupMenu
 {
 
-  public ContextMenu(final CButton item)
+  private final MediaElement media;
+  private final JTable table;
+
+  public ContextMenu(final MediaElement item, JTable table)
   {
+    this.media = item;
+    this.table = table;
+
     setBorder(BorderFactory.createLineBorder(Color.black));
 
-    playButton(item);
-    playListButton(item);
-    seenButton(item);
+    playButton();
+    playListButton();
+    seenButton();
 
     addSeparator();
 
-    renameButton(item);
+    renameButton();
 
-    add(new JMenuItem("Change image"));
-    removeButton(item);
+    removeButton();
+
+    Utils.setCurrentContextMenu(this);
   }
 
-  private void renameButton(final CButton item)
+  private void renameButton()
   {
-//    JMenuItem renameItem = new JMenuItem("Rename");
-//    renameItem.addActionListener(new ActionListener()
-//    {
-//      @Override
-//      public void actionPerformed(ActionEvent evt)
-//      {
-//        String name = JOptionPane.showInputDialog(Gui.getInstance(),
-//                                                  "Rename the media?", item.getMediaName());
-//        if (name != null)
-//        {
-//          item.setMediaName(name);
-//          new DatabaseSaver().execute();
-//        }
-//      }
-//    });
-//    add(renameItem);
+    JMenuItem renameItem = new JMenuItem("Rename");
+    renameItem.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent evt)
+      {
+        String name = JOptionPane.showInputDialog(Gui.getInstance(),
+                                                  "Rename the media?", media.getName());
+        if (name != null)
+        {
+          media.setName(name);
+          refreshTable();
+          new DatabaseSaver().execute();
+        }
+      }
+    });
+    add(renameItem);
   }
 
-  private void removeButton(final CButton item)
+  private void refreshTable()
+  {
+    table.revalidate();
+    table.repaint();
+  }
+
+  private void removeButton()
   {
     JMenuItem removeItem = new JMenuItem("Remove");;
     removeItem.addActionListener(new ActionListener()
@@ -70,7 +88,7 @@ class ContextMenu extends JPopupMenu
                                                          "Confirm", JOptionPane.OK_CANCEL_OPTION);
         if (confirmation == JOptionPane.OK_OPTION)
         {
-          item.setVisible(false);
+          getMedia().setVisible(false);
           Gui.getInstance().updateSearchBar();
           new DatabaseSaver().execute();
         }
@@ -81,60 +99,58 @@ class ContextMenu extends JPopupMenu
     add(removeItem);
   }
 
-  private void seenButton(final CButton item)
+  private void seenButton()
   {
-//    final JMenuItem seenToggle = new JMenuItem("Toggle seen");
-//    seenToggle.setAccelerator(KeyStroke.getKeyStroke('s'));
-//    seenToggle.addActionListener(new ActionListener()
-//    {
-//      @Override
-//      public void actionPerformed(ActionEvent e)
-//      {
-//        item.setSeen(!item.getSeen());
-//        new DatabaseSaver().execute();
-//      }
-//    });
-//    add(seenToggle);
+    final JMenuItem seenToggle = new JMenuItem("Toggle seen");
+    seenToggle.setAccelerator(KeyStroke.getKeyStroke('s'));
+    seenToggle.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        getMedia().setSeen(!media.getSeen());
+        refreshTable();
+        new DatabaseSaver().execute();
+      }
+    });
+    add(seenToggle);
   }
 
-  private void playListButton(final CButton item)
+  private void playListButton()
   {
-//    final JMenuItem playList = new JMenuItem("Play media and following");
-//    playList.addActionListener(new ActionListener()
-//    {
-//      @Override
-//      public void actionPerformed(ActionEvent e)
-//      {
-//        final Component[] components = item.getParent().getParent().getComponents();
-//        int i = 0;
-//        for (Component component : components)
-//        {
-//          if (component == item.getParent())
-//            break;
-//          i++;
-//        }
-//
-//        final CButton[] files = new CButton[components.length - i];
-//        for (int j = 0; i < components.length; i++, j++)
-//          files[j] = (CButton) ((ButtonHolder) components[i]).getComponent(0);
-//        new FilePlayer(files).execute();
-//      }
-//    });
-//    add(playList);
+    final JMenuItem playList = new JMenuItem("Play media and following");
+    playList.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        final CButton cButton = getMedia().getParent();
+        new FilePlayer(cButton.getMedias().toArray(new MediaElement[cButton.getMedias().size()])).execute();
+      }
+    });
+    add(playList);
   }
 
-  private void playButton(final CButton item)
+  private void playButton()
   {
-//    final JMenuItem play = new JMenuItem("Play media");
-//    play.setAccelerator(KeyStroke.getKeyStroke('p'));
-//    play.addActionListener(new ActionListener()
-//    {
-//      @Override
-//      public void actionPerformed(ActionEvent e)
-//      {
-//        new FilePlayer(item).execute();
-//      }
-//    });
-//    add(play);
+    final JMenuItem play = new JMenuItem("Play media");
+    play.setAccelerator(KeyStroke.getKeyStroke('p'));
+    play.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        new FilePlayer(getMedia()).execute();
+      }
+    });
+    add(play);
+  }
+
+  /**
+   * @return the media
+   */
+  public MediaElement getMedia()
+  {
+    return media;
   }
 }

@@ -19,22 +19,24 @@ public class MediaElement implements Comparable<MediaElement>, Externalizable
   private String tag;
   private boolean seen;
   private boolean visible;
+  private CButton parent;
 
   public MediaElement()
   {
   }
 
-  public MediaElement(String name, String path, String tag, boolean seen)
+  public MediaElement(String name, String path, String tag, boolean seen, CButton parent)
   {
     this.name = name;
     this.path = path;
     this.tag = tag;
     this.seen = seen;
+    this.parent = parent;
   }
 
-  public MediaElement(String name, String path, boolean seen)
+  public MediaElement(String name, String path, boolean seen, CButton parent)
   {
-    this(name, path, "", seen);
+    this(name, path, "", seen, parent);
   }
 
   /**
@@ -105,6 +107,11 @@ public class MediaElement implements Comparable<MediaElement>, Externalizable
     return visible;
   }
 
+  void setVisible(boolean b)
+  {
+    visible = b;
+  }
+
   @Override
   public int compareTo(MediaElement o)
   {
@@ -122,4 +129,19 @@ public class MediaElement implements Comparable<MediaElement>, Externalizable
     return name;
   }
 
+  /**
+   * @return the parent
+   */
+  public CButton getParent()
+  {
+    return parent;
+  }
+
+  /**
+   * @param parent the parent to set
+   */
+  public void setParent(CButton parent)
+  {
+    this.parent = parent;
+  }
 }

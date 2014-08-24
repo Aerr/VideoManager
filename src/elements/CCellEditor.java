@@ -7,6 +7,7 @@ package elements;
 
 import database.FilePlayer;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.EventObject;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -16,7 +17,7 @@ import javax.swing.JTextField;
  *
  * @author aerr
  */
-public class CCellEditor extends DefaultCellEditor
+public class CCellEditor extends DefaultCellEditor implements MouseListener
 {
 
   private final JTable table;
@@ -40,12 +41,46 @@ public class CCellEditor extends DefaultCellEditor
       if (e.getClickCount() == 3)
         return true;
       else if (e.getClickCount() == 2)
-      {
-        MediaElement selected = (MediaElement) medias[table.convertRowIndexToModel(table.getSelectedRow())];
-        new FilePlayer(selected).execute();
-      }
+        new FilePlayer(getSelected()).execute();
     }
     return false;
+  }
+
+  private MediaElement getSelected()
+  {
+    return (MediaElement) medias[table.convertRowIndexToModel(table.getSelectedRow())];
+  }
+
+  @Override
+  public void mouseClicked(MouseEvent e)
+  {
+    if (e.getButton() == MouseEvent.BUTTON3)
+    {
+      int row = table.rowAtPoint(e.getPoint());
+      table.setRowSelectionInterval(row, row);
+      ContextMenu menu = new ContextMenu(getSelected(), table);
+      menu.show(e.getComponent(), e.getX(), e.getY());
+    }
+  }
+
+  @Override
+  public void mousePressed(MouseEvent e)
+  {
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent e)
+  {
+  }
+
+  @Override
+  public void mouseEntered(MouseEvent e)
+  {
+  }
+
+  @Override
+  public void mouseExited(MouseEvent e)
+  {
   }
 
 }
