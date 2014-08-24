@@ -17,31 +17,33 @@ import misc.Utils;
  */
 public class CCellRenderer extends DefaultTableCellRenderer
 {
+  private final Object[] medias;
+
+  public CCellRenderer(Object[] medias)
+  {
+    this.medias = medias;
+  }
 
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
   {
-    if (value.getClass() == MediaElement.class)
-    {
-      MediaElement media = (MediaElement) value;
-      isSelected = isSelected && (table.hasFocus() || Utils.isContextMenuDisplayed(media));
-      final Component superResult = super.getTableCellRendererComponent(table, value,
-                                                                        isSelected, hasFocus, row, column);
+    MediaElement media = (MediaElement) medias[table.convertRowIndexToModel(row)];
+    isSelected = isSelected && (table.hasFocus() || Utils.isContextMenuDisplayed(media));
+    final Component superResult = super.getTableCellRendererComponent(table, value,
+                                                                      isSelected, hasFocus, row, column);
 
-      if (isSelected)
-        superResult.setBackground(Color.darkGray);
-      else
-        superResult.setBackground(null);
+    if (isSelected)
+      superResult.setBackground(Color.darkGray);
+    else
+      superResult.setBackground(null);
 
+    if (media != null)
       if (media.getSeen())
         superResult.setForeground(Color.gray);
       else
         superResult.setForeground(Color.white);
 
-      return superResult;
-    }
-    else
-      return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    return superResult;
   }
 
 }

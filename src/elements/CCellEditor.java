@@ -36,10 +36,10 @@ public class CCellEditor extends DefaultCellEditor implements MouseListener
   {
     // Normally: from context menu -> Rename
     if (anEvent == null)
-      return true;
+      return beforeEdition();
     // Normally: from F2 press
     if (anEvent.getClass() == java.awt.event.ActionEvent.class)
-      return true;
+      return beforeEdition();
 
     if (anEvent.getClass() == MouseEvent.class)
     {
@@ -50,10 +50,18 @@ public class CCellEditor extends DefaultCellEditor implements MouseListener
     return false;
   }
 
+  private boolean beforeEdition()
+  {
+    final int selectedRow = table.getSelectedRows()[table.getSelectedRowCount() - 1];
+    table.setRowSelectionInterval(selectedRow, selectedRow);
+    return true;
+  }
+
   @Override
   protected void fireEditingStopped()
   {
     super.fireEditingStopped();
+
     final String newName = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
     getSelected().setName(newName);
     new DatabaseSaver().execute();

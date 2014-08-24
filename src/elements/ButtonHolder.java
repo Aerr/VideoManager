@@ -59,7 +59,7 @@ public class ButtonHolder extends JPanel
     final Object[] mediasArray = medias.toArray();
     final CCellEditor cCellEditor = new CCellEditor(table, mediasArray);
     table.getColumnModel().getColumn(0).setCellEditor(cCellEditor);
-    table.getColumnModel().getColumn(0).setCellRenderer(new CCellRenderer());
+    table.getColumnModel().getColumn(0).setCellRenderer(new CCellRenderer(mediasArray));
 
     table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "play");
     table.getActionMap().put("play", new PlayAction(mediasArray));

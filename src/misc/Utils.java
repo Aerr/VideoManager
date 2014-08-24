@@ -68,6 +68,8 @@ public class Utils
 
   public static boolean isContextMenuDisplayed(MediaElement media)
   {
+    if (media == null)
+      return false;
     return currentContextMenu != null && currentContextMenu.isVisible() && currentContextMenu.getMedia() == media;
   }
 
