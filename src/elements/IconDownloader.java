@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
 import misc.Utils;
@@ -35,7 +37,9 @@ public class IconDownloader extends SwingWorker<Void, Void>
     try
     {
       String search = button.getText() + "+poster";
-      URL url = new URL("https://www.bing.com/images/search?q=" + search.replace(" ", "+"));
+      URL url = new URL("https://www.bing.com/images/search?q="
+                        + search.replace(" ", "+")
+                        + "&qft=+filterui:aspect-tall+filterui:imagesize-medium");
 
       is = url.openStream();
       BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -46,7 +50,8 @@ public class IconDownloader extends SwingWorker<Void, Void>
 
     } catch (IOException e)
     {
-      e.printStackTrace();
+      Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, e);
+      System.out.println(button.getText() + "+poster");
     } finally
     {
       try
@@ -55,22 +60,24 @@ public class IconDownloader extends SwingWorker<Void, Void>
           is.close();
       } catch (IOException e)
       {
-        e.printStackTrace();
+        Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, e);
+        System.out.println(button.getText() + "+poster");
       }
     }
 
     resultURL = res.toString();
     resultURL = resultURL.substring(resultURL.indexOf("imgurl:&quot;") + "imgurl:&quot;".length());
     final int indexOf = resultURL.indexOf("&quot;,");
-    BufferedImage newImage = null;
-    boolean coucou = false;
+    BufferedImage newImage;
     if (indexOf >= 0)
       try
       {
         resultURL = resultURL.substring(0, indexOf);
-        newImage = ImageIO.read(new URL(resultURL));
+        final URL url = new URL(resultURL);
+        newImage = ImageIO.read(url);
       } catch (IOException e)
       {
+        Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, e);
         button.setImage(ImageIO.read(new File("resources/unknown.jpg")));
         return null;
       }
@@ -79,6 +86,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
       button.setImage(ImageIO.read(new File("resources/unknown.jpg")));
       return null;
     }
+
     Dimension dim = getRatio(newImage.getWidth(), newImage.getHeight());
 
     BufferedImage image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);

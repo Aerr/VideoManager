@@ -18,7 +18,7 @@ public class MediaElement implements Comparable<MediaElement>, Externalizable
   private String path;
   private String tag;
   private boolean seen;
-  private boolean visible;
+  private boolean visible = true;
   private CButton parent;
 
   public MediaElement()
