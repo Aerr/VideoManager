@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package actions;
 
 import database.DatabaseSaver;
@@ -19,29 +18,44 @@ import javax.swing.JTable;
 public abstract class CAbstractAction extends AbstractAction
 {
 
-  private final Object[] medias;
+  private final JTable parentTable;
+  protected MediaElement media;
 
-  public CAbstractAction(Object[] mediasArray)
+  public CAbstractAction()
   {
-    this.medias = mediasArray;
+    this.parentTable = null;
+  }
+
+  public CAbstractAction(MediaElement media, JTable parentTable)
+  {
+    this.parentTable = parentTable;
+    this.media = media;
   }
 
   MediaElement[] getSelected(JTable table)
   {
+    if (table == null)
+      table = parentTable;
+
     MediaElement[] res = new MediaElement[table.getSelectedRowCount()];
     for (int i = 0; i < table.getSelectedRowCount(); i++)
-      res[i] = (MediaElement) medias[table.convertRowIndexToModel(table.getSelectedRows()[i])];
+      res[i] = (MediaElement) table.getModel()
+              .getValueAt(table.convertRowIndexToModel(table.getSelectedRows()[i]), 0);
     return res;
   }
 
   @Override
   public void actionPerformed(ActionEvent e)
   {
-    JTable table = (JTable) e.getSource();
-
+    final Object source = e.getSource();
+    JTable table = (source.getClass() == JTable.class) ? (JTable) source : null;
     actionPerformed(table);
 
     new DatabaseSaver().execute();
+
+    if (table == null)
+      return;
+
     table.revalidate();
     table.repaint();
   }

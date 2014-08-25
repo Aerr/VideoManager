@@ -112,7 +112,7 @@ public class MediaElement implements Comparable<MediaElement>, Externalizable
     return visible;
   }
 
-  void setVisible(boolean b)
+  public void setVisible(boolean b)
   {
     visible = b;
   }

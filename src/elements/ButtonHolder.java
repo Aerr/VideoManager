@@ -11,6 +11,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
+import javax.swing.RowFilter;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class ButtonHolder extends JPanel
 {
@@ -46,7 +49,7 @@ public class ButtonHolder extends JPanel
       i++;
     }
 
-    JTable table = new JTable(data, columnNames);
+    final JTable table = new JTable(data, columnNames);
 
     table.setRowHeight(40);
 
@@ -55,19 +58,39 @@ public class ButtonHolder extends JPanel
     table.setForeground(Color.white);
     table.setBackground(null);
 
-    this.add(table, BorderLayout.CENTER);
     final Object[] mediasArray = medias.toArray();
     final CCellEditor cCellEditor = new CCellEditor(table, mediasArray);
     table.getColumnModel().getColumn(0).setCellEditor(cCellEditor);
     table.getColumnModel().getColumn(0).setCellRenderer(new CCellRenderer(mediasArray));
 
     table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "play");
-    table.getActionMap().put("play", new PlayAction(mediasArray));
+    table.getActionMap().put("play", new PlayAction());
 
     table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "toggleSeen");
-    table.getActionMap().put("toggleSeen", new SeenToggleAction(mediasArray));
+    table.getActionMap().put("toggleSeen", new SeenToggleAction());
+
+    table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "toggleSeen");
+    table.getActionMap().put("toggleSeen", new SeenToggleAction());
 
     table.addMouseListener(cCellEditor);
+
+    TableModel model = table.getModel();
+    TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
+
+    RowFilter<TableModel, Object> rf = new RowFilter<TableModel, Object>()
+    {
+      @Override
+      public boolean include(RowFilter.Entry<? extends TableModel, ? extends Object> entry)
+      {
+        final MediaElement elt = (MediaElement) entry.getModel().getValueAt((Integer) entry.getIdentifier(), 0);
+        return elt.getVisible();
+      }
+    };
+    sorter.setRowFilter(rf);
+
+    table.setRowSorter(sorter);
+
+    this.add(table, BorderLayout.CENTER);
 
     JPanel holder = new JPanel();
     holder.setBackground(null);

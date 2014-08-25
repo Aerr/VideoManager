@@ -6,6 +6,7 @@
 package actions;
 
 import database.FilePlayer;
+import elements.MediaElement;
 import javax.swing.JTable;
 
 /**
@@ -15,15 +16,24 @@ import javax.swing.JTable;
 public class PlayAction extends CAbstractAction
 {
 
-  public PlayAction(Object[] mediasArray)
+  public PlayAction()
   {
-    super(mediasArray);
+    super();
+  }
+
+  public PlayAction(MediaElement media, JTable parentTable)
+  {
+    super(media, parentTable);
   }
 
   @Override
   public void actionPerformed(JTable table)
   {
-    new FilePlayer(getSelected(table)).execute();
+    final MediaElement[] selected = getSelected(table);
+    if (selected.length > 1)
+      new FilePlayer(selected).execute();
+    else
+      new FilePlayer(media).execute();
   }
 
 }

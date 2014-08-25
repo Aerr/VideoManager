@@ -78,7 +78,8 @@ public class CCellEditor extends DefaultCellEditor implements MouseListener
     if (e.getButton() == MouseEvent.BUTTON3)
     {
       int row = table.rowAtPoint(e.getPoint());
-      table.setRowSelectionInterval(row, row);
+      if (table.getSelectedRowCount() == 0)
+        table.setRowSelectionInterval(row, row);
       ContextMenu menu = new ContextMenu(getSelected(), table);
       menu.show(e.getComponent(), e.getX(), e.getY());
     }

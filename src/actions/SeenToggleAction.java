@@ -14,18 +14,30 @@ import javax.swing.JTable;
  */
 public class SeenToggleAction extends CAbstractAction
 {
-  public SeenToggleAction(Object[] mediasArray)
+
+  public SeenToggleAction()
   {
-    super(mediasArray);
+    super();
+  }
+
+  public SeenToggleAction(MediaElement media, JTable parentTable)
+  {
+    super(media, parentTable);
   }
 
   @Override
   public void actionPerformed(JTable table)
   {
-    final MediaElement[] selected = getSelected(table);
-    boolean toSet = !selected[0].getSeen();
-    for (MediaElement media : selected)
-      media.setSeen(toSet);
+    if (table != null)
+    {
+      final MediaElement[] selected = getSelected(table);
+      boolean toSet = !selected[0].getSeen();
+
+      for (MediaElement mediaElement : selected)
+        mediaElement.setSeen(toSet);
+    }
+    else
+      media.toggleSeen();
   }
 
 }

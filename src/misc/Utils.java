@@ -16,7 +16,7 @@ import java.awt.Dimension;
 public class Utils
 {
 
-  public static final Dimension ICON_DIMENSION = new Dimension(125, 200);
+  public static final Dimension ICON_DIMENSION = new Dimension(150, 240);
   public static final int GUI_INSET = 25;
   public static final int GUI_VGAP = 40;
   public static final int GUI_HGAP = 25;

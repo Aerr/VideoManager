@@ -72,19 +72,13 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
 
   public void downloadIcon()
   {
-    if (this.getIcon() == null)
-      new IconDownloader(this).execute();
+    new IconDownloader(this).execute();
   }
 
   public void setImage(BufferedImage newImage)
   {
     if (newImage != null)
-    {
       this.setIcon(new ImageIcon(newImage));
-
-      revalidate();
-      repaint();
-    }
   }
 
   @Override

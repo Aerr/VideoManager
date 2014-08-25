@@ -214,16 +214,8 @@ public final class Gui extends JFrame
         jPanel.add(new ButtonHolder(cButton));
       jPanel.add(Box.createRigidArea(new Dimension(65, 65)));
     }
-    revalidate();
 
-//    final int columns = ((GridLayout) jPanel.getLayout()).getColumns();
-//    if (jPanel.getComponentCount() > 0)
-//      while (jPanel.getComponent(0).getSize().height > Utils.ICON_DIMENSION.height)
-//      {
-//        for (int i = 0; i < columns; i++)
-//          jPanel.add(new ButtonHolder());
-//        revalidate();
-//      }
+    revalidate();
     repaint();
   }
 }
