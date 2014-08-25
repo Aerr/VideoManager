@@ -1,9 +1,11 @@
 package elements;
 
 import actions.PlayAction;
+import actions.RemoveAction;
 import actions.SeenToggleAction;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.TreeSet;
 import javax.swing.Box;
@@ -69,8 +71,8 @@ public class ButtonHolder extends JPanel
     table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "toggleSeen");
     table.getActionMap().put("toggleSeen", new SeenToggleAction());
 
-    table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "toggleSeen");
-    table.getActionMap().put("toggleSeen", new SeenToggleAction());
+    table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "remove");
+    table.getActionMap().put("remove", new RemoveAction());
 
     table.addMouseListener(cCellEditor);
 
@@ -90,14 +92,23 @@ public class ButtonHolder extends JPanel
 
     table.setRowSorter(sorter);
 
-    this.add(table, BorderLayout.CENTER);
+    JPanel tableHolder = new JPanel();
+    tableHolder.setBackground(null);
+    tableHolder.setLayout(new BoxLayout(tableHolder, BoxLayout.PAGE_AXIS));
+    tableHolder.add(Box.createVerticalGlue());
+    tableHolder.add(table);
+    tableHolder.add(Box.createVerticalGlue());
+    if (medias.size() < 3)
+    tableHolder.add(Box.createRigidArea(new Dimension(1, 60)));
 
-    JPanel holder = new JPanel();
-    holder.setBackground(null);
-    holder.setLayout(new BoxLayout(holder, BoxLayout.PAGE_AXIS));
-    holder.add(cButton);
-    holder.add(Box.createVerticalGlue());
-    this.add(holder, BorderLayout.LINE_START);
+    JPanel pictureHolder = new JPanel();
+    pictureHolder.setBackground(null);
+    pictureHolder.setLayout(new BoxLayout(pictureHolder, BoxLayout.PAGE_AXIS));
+    pictureHolder.add(cButton);
+    pictureHolder.add(Box.createVerticalGlue());
+
+    this.add(tableHolder, BorderLayout.CENTER);
+    this.add(pictureHolder, BorderLayout.LINE_START);
   }
 
   @Override

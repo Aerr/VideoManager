@@ -3,14 +3,10 @@ package elements;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.Externalizable;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -61,13 +57,11 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     addMouseListener(new FileListListener(this));
 
     if (this.getIcon() == null)
-      try
-      {
-        setImage(ImageIO.read(new File("resources/unknown.jpg")));
-      } catch (IOException ex)
-      {
-        Logger.getLogger(CButton.class.getName()).log(Level.SEVERE, null, ex);
-      }
+    {
+      setIcon(Utils.getUnknownIcon());
+      if (medias.size() > 0)
+        downloadIcon();
+    }
   }
 
   public void downloadIcon()
@@ -102,7 +96,10 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
   public void writeExternal(ObjectOutput out) throws IOException
   {
     out.writeObject(name);
-    out.writeObject(this.getIcon());
+    if (this.getIcon() == Utils.getUnknownIcon())
+      out.writeObject(null);
+    else
+      out.writeObject(this.getIcon());
     out.writeObject(medias);
   }
 

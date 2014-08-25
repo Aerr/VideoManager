@@ -8,6 +8,12 @@ package misc;
 import elements.ContextMenu;
 import elements.MediaElement;
 import java.awt.Dimension;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -30,6 +36,17 @@ public class Utils
     ".avi", ".mkv", ".mp4"
   };
   private static ContextMenu currentContextMenu;
+  private static ImageIcon unknownIcon;
+  static
+  {
+    try
+    {
+      unknownIcon = new ImageIcon(ImageIO.read(new File("resources/unknown.jpg")));
+    } catch (IOException ex)
+    {
+      Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }
 
   public static String getPrefix(String src, String... delimiter)
   {
@@ -79,5 +96,13 @@ public class Utils
   public static void setCurrentContextMenu(ContextMenu aCurrentContextMenu)
   {
     currentContextMenu = aCurrentContextMenu;
+  }
+
+  /**
+   * @return the unknownIcon
+   */
+  public static ImageIcon getUnknownIcon()
+  {
+    return unknownIcon;
   }
 }

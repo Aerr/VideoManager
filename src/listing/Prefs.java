@@ -7,7 +7,6 @@ public class Prefs
 
   private static class PrefsHolder
   {
-
     private final static Prefs instance = new Prefs();
   }
 
@@ -36,6 +35,17 @@ public class Prefs
   public Preferences getPrefs()
   {
     return prefs;
+  }
+
+  public static void main(String[] args)
+  {
+    final Preferences prefs = Preferences.userRoot().node("Prefs");
+    try
+    {
+      prefs.clear();
+    } catch (Exception e)
+    {
+    }
   }
 
 }

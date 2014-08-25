@@ -212,7 +212,7 @@ public final class Gui extends JFrame
     {
       if (cButton.isVisible())
         jPanel.add(new ButtonHolder(cButton));
-      jPanel.add(Box.createRigidArea(new Dimension(65, 65)));
+      jPanel.add(Box.createRigidArea(new Dimension(1, 50)));
     }
 
     revalidate();

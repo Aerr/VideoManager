@@ -17,7 +17,6 @@ public class RemoveAction extends CAbstractAction
   @Override
   public void actionPerformed(JTable table)
   {
-    System.out.println("actionPerformed");
     String text = "<html><p>Are you sure you want to remove this media(s) from your library?</p>"
                   + "<p><font size=-2>(The file(s) will not be removed from your drive)</font></p></html>";
 

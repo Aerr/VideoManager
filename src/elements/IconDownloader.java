@@ -5,11 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -20,7 +19,9 @@ public class IconDownloader extends SwingWorker<Void, Void>
 {
 
   private final CButton button;
-  private String resultURL;
+
+  static final String start = "\"url\":\"";
+  static final String end = "\",\"visibleUrl\":";
 
   public IconDownloader(CButton button)
   {
@@ -28,78 +29,78 @@ public class IconDownloader extends SwingWorker<Void, Void>
     this.button = button;
   }
 
-  @Override
-  protected Void doInBackground() throws Exception
+  public void invokeProcess()
   {
-    InputStream is = null;
-    StringBuilder res = new StringBuilder();
+    doInBackground();
+  }
 
+  @Override
+  protected Void doInBackground()
+  {
+    BufferedImage newImage;
+    String[] split = null;
     try
     {
-      String search = button.getText() + "+poster";
-      URL url = new URL("https://www.bing.com/images/search?q="
-                        + search.replace(" ", "+")
-                        + "&qft=+filterui:aspect-tall+filterui:imagesize-medium");
 
-      is = url.openStream();
-      BufferedReader br = new BufferedReader(new InputStreamReader(is));
+      String search = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=";
+      search += button.getText().replace(" ", "+");
 
-      String line = null;
-      while ((line = br.readLine()) != null)
-        res.append(line);
+      URL url = new URL(search);
+      URLConnection connection = url.openConnection();
 
-    } catch (IOException e)
+      
+
+      String line;
+      StringBuilder builder = new StringBuilder();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+      while ((line = reader.readLine()) != null)
+        builder.append(line);
+
+      
+
+      String imageUrl = builder.toString();
+      imageUrl = imageUrl.substring(imageUrl.indexOf(start) + start.length());
+      split = imageUrl.split("\"url\":\"");
+
+      
+
+    } catch (IOException ex)
     {
-      Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, e);
-      System.out.println(button.getText() + "+poster");
-    } finally
-    {
-      try
-      {
-        if (is != null)
-          is.close();
-      } catch (IOException e)
-      {
-        Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, e);
-        System.out.println(button.getText() + "+poster");
-      }
+      Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, ex);
     }
 
-    resultURL = res.toString();
-    resultURL = resultURL.substring(resultURL.indexOf("imgurl:&quot;") + "imgurl:&quot;".length());
-    final int indexOf = resultURL.indexOf("&quot;,");
-    BufferedImage newImage;
-    if (indexOf >= 0)
+    
+
+    for (String string : split)
+    {
       try
       {
-        resultURL = resultURL.substring(0, indexOf);
-        final URL url = new URL(resultURL);
-        newImage = ImageIO.read(url);
+        newImage = ImageIO.read(new URL(string.substring(0, string.indexOf(end))));
       } catch (IOException e)
       {
-        Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, e);
-        button.setImage(ImageIO.read(new File("resources/unknown.jpg")));
-        return null;
+        continue;
       }
-    else
-    {
-      button.setImage(ImageIO.read(new File("resources/unknown.jpg")));
+
+
+      Dimension dim = getRatio(newImage.getWidth(), newImage.getHeight());
+
+      BufferedImage image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+      Graphics2D g2 = image.createGraphics();
+
+      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+      g2.drawImage(newImage, 0, 0, dim.width, dim.height, null);
+      g2.dispose();
+
+      button.setImage(image);
+
+      
       return null;
     }
 
-    Dimension dim = getRatio(newImage.getWidth(), newImage.getHeight());
-
-    BufferedImage image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
-    Graphics2D g2 = image.createGraphics();
-
-    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-    g2.drawImage(newImage, 0, 0, dim.width, dim.height, null);
-    g2.dispose();
-
-    button.setImage(image);
-
+    button.setIcon(Utils.getUnknownIcon());
+    
     return null;
   }
 
@@ -116,6 +117,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
   protected void done()
   {
     super.done();
+    
   }
 
 }

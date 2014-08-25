@@ -98,6 +98,7 @@ public class FileWalker
           {
             final CButton cButton = new CButton(file);
             cButton.addMedia(file.trim(), fileToString);
+            cButton.downloadIcon();
             setButtons.add(cButton);
           }
           else
@@ -124,7 +125,7 @@ public class FileWalker
           }
       }
 
-      if (cButton.getMedias().size() == 0)
+      if (cButton.getMedias().isEmpty())
         it.remove();
     }
   }
