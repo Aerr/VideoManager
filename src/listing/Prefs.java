@@ -39,7 +39,7 @@ public class Prefs
 
   public static void main(String[] args)
   {
-    final Preferences prefs = Preferences.userRoot().node("Prefs");
+    final Preferences prefs = Preferences.userRoot().node(Prefs.class.getName());
     try
     {
       prefs.clear();

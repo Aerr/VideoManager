@@ -6,10 +6,10 @@ import database.FilePlayer;
 import elements.ButtonHolder;
 import elements.CButton;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -35,7 +35,7 @@ public final class Gui extends JFrame
   private static final long serialVersionUID = 1L;
   private final JPanel jPanel;
   private final JButton stopButton;
-  private final JTextField searchBar;
+  private JTextField searchBar;
 
   /**
    * @return the stopButton
@@ -43,6 +43,14 @@ public final class Gui extends JFrame
   public JButton getStopButton()
   {
     return stopButton;
+  }
+
+  /**
+   * @return the jPanel
+   */
+  public JPanel getjPanel()
+  {
+    return jPanel;
   }
 
   private static class GuiHolder
@@ -72,8 +80,8 @@ public final class Gui extends JFrame
     final JScrollPane mediaGrid = mediaGridInit();
 
     JMenuBar jMenuBar = new JMenuBar();
-    searchBar = searchBarInit();
 
+    searchBarInit();
     jMenuBar.add(searchBar);
     JButton refresh = refreshButtonInit();
 
@@ -153,34 +161,37 @@ public final class Gui extends JFrame
     return refresh;
   }
 
-  private JTextField searchBarInit()
+  private void searchBarInit()
   {
-    final JTextField searchBarItem = new JTextField();
-    searchBarItem.addCaretListener(new CaretListener()
+    searchBar = new JTextField();
+    searchBar.addCaretListener(new CaretListener()
     {
 
       @Override
       public void caretUpdate(CaretEvent arg0)
       {
-        TreeSet<CButton> get = FileWalker.getInstance().getSetButtons();
-        if (searchBarItem.getText().equals(""))
-          populateList(get);
-
-        get = new TreeSet(get);
-        for (Iterator<CButton> it = get.iterator(); it.hasNext();)
-        {
-          CButton cButton = it.next();
-          if (!cButton.toString().toLowerCase().contains(
-                  searchBarItem.getText().toLowerCase()))
-            it.remove();
-        }
-
-        populateList(get);
-
-        Prefs.getInstance().getPrefs().put("Last-Prefs-SearchBar", searchBarItem.getText());
+        reloadList();
+        boolean removed = false;
+        for (Component component : Gui.this.getjPanel().getComponents())
+          if (component.getClass() == ButtonHolder.class)
+          {
+            ButtonHolder holder = (ButtonHolder) component;
+            if (holder.toString().toLowerCase().contains(searchBar.getText().toLowerCase()))
+              continue;
+            holder.filter(searchBar.getText());
+            removed = holder.getRowCount() <= 0;
+            if (removed)
+              Gui.this.getjPanel().remove(component);
+          }
+          else if (removed)
+          {
+            Gui.this.getjPanel().remove(component);
+            removed = false;
+          }
+        Prefs.getInstance().getPrefs().put("Last-Prefs-SearchBar", searchBar.getText());
       }
-    });
-    return searchBarItem;
+    }
+    );
   }
 
   private JScrollPane mediaGridInit()

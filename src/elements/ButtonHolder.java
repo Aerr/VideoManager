@@ -16,17 +16,14 @@ import javax.swing.KeyStroke;
 import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import misc.Utils;
 
-public class ButtonHolder extends JPanel
+public final class ButtonHolder extends JPanel
 {
 
   private static final long serialVersionUID = 1L;
   private final CButton cButton;
-
-  public ButtonHolder()
-  {
-    this(null);
-  }
+  private final JTable table;
 
   public ButtonHolder(CButton cButton)
   {
@@ -51,7 +48,7 @@ public class ButtonHolder extends JPanel
       i++;
     }
 
-    final JTable table = new JTable(data, columnNames);
+    table = new JTable(data, columnNames);
 
     table.setRowHeight(40);
 
@@ -78,19 +75,10 @@ public class ButtonHolder extends JPanel
 
     TableModel model = table.getModel();
     TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
-
-    RowFilter<TableModel, Object> rf = new RowFilter<TableModel, Object>()
-    {
-      @Override
-      public boolean include(RowFilter.Entry<? extends TableModel, ? extends Object> entry)
-      {
-        final MediaElement elt = (MediaElement) entry.getModel().getValueAt((Integer) entry.getIdentifier(), 0);
-        return elt.getVisible();
-      }
-    };
-    sorter.setRowFilter(rf);
-
     table.setRowSorter(sorter);
+
+    filter("");
+
 
     JPanel tableHolder = new JPanel();
     tableHolder.setBackground(null);
@@ -99,7 +87,10 @@ public class ButtonHolder extends JPanel
     tableHolder.add(table);
     tableHolder.add(Box.createVerticalGlue());
     if (medias.size() < 3)
-    tableHolder.add(Box.createRigidArea(new Dimension(1, 60)));
+      tableHolder.add(Box.createRigidArea(new Dimension(1, 60)));
+    if (medias.size() <= 6)
+      setMaximumSize(new Dimension(9999, Utils.ICON_DIMENSION.height));
+
 
     JPanel pictureHolder = new JPanel();
     pictureHolder.setBackground(null);
@@ -111,9 +102,28 @@ public class ButtonHolder extends JPanel
     this.add(pictureHolder, BorderLayout.LINE_START);
   }
 
+  public void filter(final String search)
+  {
+    RowFilter<TableModel, Object> rf = new RowFilter<TableModel, Object>()
+    {
+      @Override
+      public boolean include(RowFilter.Entry<? extends TableModel, ? extends Object> entry)
+      {
+        final MediaElement elt = (MediaElement) entry.getModel().getValueAt((Integer) entry.getIdentifier(), 0);
+        return elt.getVisible() && (search.equals("") || elt.getName().toLowerCase().contains(search.toLowerCase()));
+      }
+    };
+    ((TableRowSorter<TableModel>) table.getRowSorter()).setRowFilter(rf);
+  }
+
   @Override
   public String toString()
   {
     return cButton.toString();
+  }
+
+  public int getRowCount()
+  {
+    return table.getRowCount();
   }
 }
