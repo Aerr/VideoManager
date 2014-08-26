@@ -5,7 +5,7 @@
  */
 package misc;
 
-import elements.ContextMenu;
+import elements.MediaContextMenu;
 import elements.MediaElement;
 import java.awt.Dimension;
 import java.io.File;
@@ -35,7 +35,7 @@ public class Utils
   {
     ".avi", ".mkv", ".mp4"
   };
-  private static ContextMenu currentContextMenu;
+  private static MediaContextMenu currentContextMenu;
   private static ImageIcon unknownIcon;
   static
   {
@@ -73,7 +73,7 @@ public class Utils
   /**
    * @return the currentContextMenu
    */
-  public static ContextMenu getCurrentContextMenu()
+  public static MediaContextMenu getCurrentContextMenu()
   {
     return currentContextMenu;
   }
@@ -93,7 +93,7 @@ public class Utils
   /**
    * @param aCurrentContextMenu the currentContextMenu to set
    */
-  public static void setCurrentContextMenu(ContextMenu aCurrentContextMenu)
+  public static void setCurrentContextMenu(MediaContextMenu aCurrentContextMenu)
   {
     currentContextMenu = aCurrentContextMenu;
   }

@@ -55,6 +55,9 @@ public class FilePlayer extends SwingWorker<Void, Void>
       if (cancelPlayer)
         break;
 
+      if (!item.getVisible())
+        continue;
+
       String name = item.getPath();
 
       item.setSeen(true);

@@ -1,5 +1,7 @@
 package elements;
 
+import database.FilePlayer;
+import gui.Gui;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -18,15 +20,15 @@ public class FileListListener extends MouseAdapter
   public void mouseClicked(MouseEvent e)
   {
     super.mouseClicked(e);
-//    if (e.getButton() == MouseEvent.BUTTON1)
-//    {
-//      if (e.getClickCount() == 1)
-//        new FilePlayer(item).execute();
-//    }
-//    else
-//    {
-//      ContextMenu menu = new ContextMenu(item);
-//      menu.show(e.getComponent(), e.getX(), e.getY());
-//    }
+    if (e.getButton() == MouseEvent.BUTTON1)
+    {
+      if (e.getClickCount() == 2)
+        new FilePlayer(item.getMedias().toArray(new MediaElement[item.getMedias().size()])).execute();
+    }
+    else if (e.getButton() == MouseEvent.BUTTON3)
+    {
+      NewOkCancelDialog dialog = new NewOkCancelDialog(Gui.getInstance(), item);
+      dialog.setVisible(true);
+    }
   }
 }

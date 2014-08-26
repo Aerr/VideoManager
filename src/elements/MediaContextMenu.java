@@ -19,13 +19,13 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import misc.Utils;
 
-public class ContextMenu extends JPopupMenu
+public class MediaContextMenu extends JPopupMenu
 {
 
   private final MediaElement media;
   private final JTable table;
 
-  public ContextMenu(final MediaElement item, JTable table)
+  public MediaContextMenu(final MediaElement item, JTable table)
   {
     this.media = item;
     this.table = table;

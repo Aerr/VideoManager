@@ -30,7 +30,7 @@ public class PlayAction extends CAbstractAction
   public void actionPerformed(JTable table)
   {
     final MediaElement[] selected = getSelected(table);
-    if (selected.length > 1)
+    if (table != null || selected.length > 1)
       new FilePlayer(selected).execute();
     else
       new FilePlayer(media).execute();
