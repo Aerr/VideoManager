@@ -35,6 +35,7 @@ public class CCellRenderer extends DefaultTableCellRenderer
       superResult.setBackground(Color.darkGray);
     else
       superResult.setBackground(new Color(39, 39, 39));
+
     if (media != null)
       if (media.getSeen())
         superResult.setForeground(Color.gray);

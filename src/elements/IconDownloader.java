@@ -111,6 +111,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
 
       BufferedImage image = transform(newImage);
 
+
       button.setImage(image);
 
       return null;
@@ -130,6 +131,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g2.drawImage(newImage, 0, 0, dim.width, dim.height, null);
     g2.dispose();
+
     return image;
   }
 
