@@ -42,13 +42,14 @@ public class MediaContextMenu extends JPopupMenu
 
     removeButton();
 
-    Utils.setCurrentContextMenu(this);
+    Utils.setCurrentContextMenu(item);
   }
 
   @Override
   protected void firePopupMenuWillBecomeInvisible()
   {
     super.firePopupMenuWillBecomeInvisible();
+    Utils.setCurrentContextMenu(null);
     refreshTable();
   }
 

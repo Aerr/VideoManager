@@ -96,7 +96,7 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
   @Override
   public void writeExternal(ObjectOutput out) throws IOException
   {
-    out.writeObject(name);
+    out.writeObject(this.getText());
     if (this.getIcon() == Utils.getUnknownIcon())
       out.writeObject(null);
     else

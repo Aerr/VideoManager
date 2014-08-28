@@ -65,6 +65,7 @@
  */
 package gui;
 
+import database.DatabaseSaver;
 import elements.CButton;
 import elements.IconDownloader;
 import elements.MediaElement;
@@ -73,13 +74,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
+import javax.swing.Icon;
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import listing.FileWalker;
 import misc.Utils;
 
 /**
@@ -101,16 +106,20 @@ public class EditAlbum extends javax.swing.JDialog
    * A return status code - returned if apply button has been pressed
    */
   public static final int RET_APPLY = 2;
+  /**
+   * A return status code - returned if remove button has been pressed
+   */
+  public static final int RET_REMOVE = 3;
   private final CButton button;
 
   public EditAlbum(java.awt.Frame parent, CButton button)
   {
     super(parent, true);
-    initComponents();
     this.button = button;
+    initComponents();
 
     setLocationRelativeTo(parent);
-    this.getContentPane().setBackground(new Color(39, 39, 39));
+    this.getContentPane().setBackground(new Color(89, 89, 89));
 
     titleTextField.setText(this.button.getText());
     titleTextField.grabFocus();
@@ -160,12 +169,22 @@ public class EditAlbum extends javax.swing.JDialog
     jLabel4 = new javax.swing.JLabel();
     replaceTextField = new javax.swing.JTextField();
     applyButton = new javax.swing.JButton();
-    icon = new javax.swing.JButton();
+    icon = new JButton()
+    {
+      @Override
+      public void setIcon(Icon defaultIcon)
+      {
+        super.setIcon(defaultIcon);
+        if (defaultIcon != button.getIcon())
+        new DatabaseSaver().execute();
+      }
+    };
     jLabel5 = new javax.swing.JLabel();
     jLabel6 = new javax.swing.JLabel();
     customSearchTextField = new javax.swing.JTextField();
     jLabel7 = new javax.swing.JLabel();
     directUrlTextField = new javax.swing.JTextField();
+    removeButton = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     setTitle("Edit Album");
@@ -213,13 +232,6 @@ public class EditAlbum extends javax.swing.JDialog
         titleTextFieldCaretUpdate(evt);
       }
     });
-    titleTextField.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        titleTextFieldActionPerformed(evt);
-      }
-    });
 
     searchTextField.setBackground(new java.awt.Color(204, 204, 204));
     searchTextField.setBorder(titleTextField.getBorder());
@@ -229,7 +241,7 @@ public class EditAlbum extends javax.swing.JDialog
     jLabel3.setText("Replace in files:");
 
     jLabel4.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-    jLabel4.setForeground(new java.awt.Color(204, 204, 204));
+    jLabel4.setForeground(new java.awt.Color(216, 216, 216));
     jLabel4.setText("with");
 
     replaceTextField.setBackground(new java.awt.Color(204, 204, 204));
@@ -245,8 +257,10 @@ public class EditAlbum extends javax.swing.JDialog
       }
     });
 
-    icon.setBackground(new java.awt.Color(39, 39, 39));
+    icon.setBackground(new java.awt.Color(89, 89, 89));
     icon.setForeground(new java.awt.Color(255, 255, 255));
+    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gui/Bundle"); // NOI18N
+    icon.setText(bundle.getString("EditAlbum.icon.text")); // NOI18N
     icon.setBorder(null);
     icon.setBorderPainted(false);
     icon.setContentAreaFilled(false);
@@ -254,7 +268,6 @@ public class EditAlbum extends javax.swing.JDialog
     icon.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
     icon.setMaximumSize(Utils.ICON_DIMENSION);
     icon.setMinimumSize(Utils.ICON_DIMENSION);
-    icon.setOpaque(false);
     icon.setPreferredSize(Utils.ICON_DIMENSION);
     icon.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
@@ -263,18 +276,29 @@ public class EditAlbum extends javax.swing.JDialog
     jLabel5.setText("Picture:");
 
     jLabel6.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-    jLabel6.setForeground(new java.awt.Color(204, 204, 204));
+    jLabel6.setForeground(new java.awt.Color(216, 216, 216));
     jLabel6.setText("Custom search:");
 
     customSearchTextField.setBackground(new java.awt.Color(204, 204, 204));
     customSearchTextField.setBorder(titleTextField.getBorder());
+    customSearchTextField.setText("");
 
     jLabel7.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-    jLabel7.setForeground(new java.awt.Color(204, 204, 204));
+    jLabel7.setForeground(new java.awt.Color(216, 216, 216));
     jLabel7.setText("Direct URL:");
 
     directUrlTextField.setBackground(new java.awt.Color(204, 204, 204));
     directUrlTextField.setBorder(titleTextField.getBorder());
+
+    java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("elements/Bundle"); // NOI18N
+    removeButton.setText(bundle1.getString("NewOkCancelDialog.removeButton.text")); // NOI18N
+    removeButton.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        removeButtonActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -298,7 +322,8 @@ public class EditAlbum extends javax.swing.JDialog
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(titleTextField))
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(removeButton)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(applyButton)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -358,7 +383,8 @@ public class EditAlbum extends javax.swing.JDialog
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(cancelButton)
           .addComponent(okButton)
-          .addComponent(applyButton))
+          .addComponent(applyButton)
+          .addComponent(removeButton))
         .addContainerGap())
     );
 
@@ -397,20 +423,23 @@ public class EditAlbum extends javax.swing.JDialog
     customSearchTextField.setText(titleTextField.getText());
   }//GEN-LAST:event_titleTextFieldCaretUpdate
 
-  private void titleTextFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_titleTextFieldActionPerformed
-  {//GEN-HEADEREND:event_titleTextFieldActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_titleTextFieldActionPerformed
+  private void removeButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_removeButtonActionPerformed
+  {//GEN-HEADEREND:event_removeButtonActionPerformed
+    doClose(RET_REMOVE);
+  }//GEN-LAST:event_removeButtonActionPerformed
 
   private void doClose(int retStatus)
   {
     returnStatus = retStatus;
-
-    if (returnStatus != RET_CANCEL)
+    if (returnStatus == RET_REMOVE)
+      addAndRemoveButton();
+    else if (returnStatus != RET_CANCEL)
     {
       if (!button.getText().equals(titleTextField.getText()))
       {
         button.setText(titleTextField.getText());
+        addAndRemoveButton();
+        Gui.getInstance().updateSearchBar();
         if (customSearchTextField.getText().isEmpty()
             && directUrlTextField.getText().isEmpty())
           new IconDownloader(button, icon).execute();
@@ -439,9 +468,30 @@ public class EditAlbum extends javax.swing.JDialog
 
     if (returnStatus != RET_APPLY)
     {
+      new DatabaseSaver().execute();
       setVisible(false);
       dispose();
     }
+  }
+
+  private void addAndRemoveButton()
+  {
+    boolean added = false;
+    for (Iterator<CButton> it = FileWalker.getInstance().getSetButtons().iterator(); it.hasNext();)
+    {
+      CButton cButton = it.next();
+      if (cButton == button)
+        it.remove();
+      else if (!added && button.getText().equals(cButton.getText()))
+      {
+        added = true;
+        for (MediaElement mediaElement : button.getMedias())
+          cButton.getMedias().add(mediaElement);
+      }
+    }
+
+    if (!added)
+      FileWalker.getInstance().getSetButtons().add(button);
   }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -458,6 +508,7 @@ public class EditAlbum extends javax.swing.JDialog
   private javax.swing.JLabel jLabel7;
   private javax.swing.JSeparator jSeparator1;
   private javax.swing.JButton okButton;
+  private javax.swing.JButton removeButton;
   private javax.swing.JTextField replaceTextField;
   private javax.swing.JTextField searchTextField;
   private javax.swing.JTextField titleTextField;
