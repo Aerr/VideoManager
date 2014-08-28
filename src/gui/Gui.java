@@ -10,6 +10,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -18,6 +20,8 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -27,6 +31,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import listing.FileWalker;
 import listing.Prefs;
+import misc.CustomUIManager;
 import misc.Utils;
 
 public final class Gui extends JFrame
@@ -84,6 +89,33 @@ public final class Gui extends JFrame
     searchBarInit();
     jMenuBar.add(searchBar);
     JButton refresh = refreshButtonInit();
+
+    final JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setApproveButtonText("Select");
+    fileChooser.setApproveButtonMnemonic('s');
+    fileChooser.setCurrentDirectory(new java.io.File("."));
+    fileChooser.setDialogTitle("Add a new location");
+    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    fileChooser.setAcceptAllFileFilterUsed(false);
+    final JComboBox jComboBox = new JComboBox();
+    jComboBox.addItem("");
+    final String add_new_location = "Add new location...";
+    jComboBox.addItem(add_new_location);
+    jComboBox.addItemListener(new ItemListener()
+    {
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        if (e.getItem() == add_new_location && e.getStateChange() == ItemEvent.SELECTED)
+        {
+          int returnVal = fileChooser.showOpenDialog(Gui.this);
+          if (returnVal == JFileChooser.APPROVE_OPTION)
+            System.out.println("getSelectedFile() : " + fileChooser.getSelectedFile());
+        }
+      }
+    });
+
+    jMenuBar.add(jComboBox);
 
     jMenuBar.add(refresh);
     stopButton = new JButton("Stop");

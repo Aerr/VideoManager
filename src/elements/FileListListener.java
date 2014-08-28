@@ -1,5 +1,6 @@
 package elements;
 
+import gui.EditAlbum;
 import database.FilePlayer;
 import gui.Gui;
 import java.awt.event.MouseAdapter;
@@ -27,7 +28,7 @@ public class FileListListener extends MouseAdapter
     }
     else if (e.getButton() == MouseEvent.BUTTON3)
     {
-      NewOkCancelDialog dialog = new NewOkCancelDialog(Gui.getInstance(), item);
+      EditAlbum dialog = new EditAlbum(Gui.getInstance(), item);
       dialog.setVisible(true);
     }
   }

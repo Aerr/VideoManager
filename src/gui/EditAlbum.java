@@ -63,8 +63,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elements;
+package gui;
 
+import elements.CButton;
+import elements.IconDownloader;
+import elements.MediaElement;
 import gui.Gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -84,7 +87,7 @@ import misc.Utils;
  *
  * @author aerr
  */
-public class NewOkCancelDialog extends javax.swing.JDialog
+public class EditAlbum extends javax.swing.JDialog
 {
 
   /**
@@ -101,7 +104,7 @@ public class NewOkCancelDialog extends javax.swing.JDialog
   public static final int RET_APPLY = 2;
   private final CButton button;
 
-  public NewOkCancelDialog(java.awt.Frame parent, CButton button)
+  public EditAlbum(java.awt.Frame parent, CButton button)
   {
     super(parent, true);
     initComponents();
@@ -166,14 +169,14 @@ public class NewOkCancelDialog extends javax.swing.JDialog
     jLabel7 = new javax.swing.JLabel();
     directUrlTextField = new javax.swing.JTextField();
 
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("elements/Bundle"); // NOI18N
-    jLabel2.setText(bundle.getString("NewOkCancelDialog.jLabel2.text")); // NOI18N
+    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gui/Bundle"); // NOI18N
+    jLabel2.setText(bundle.getString("EditAlbum.jLabel2.text")); // NOI18N
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-    setTitle(bundle.getString("NewOkCancelDialog.title")); // NOI18N
+    java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("elements/Bundle"); // NOI18N
+    setTitle(bundle1.getString("EditAlbum.title")); // NOI18N
     setAlwaysOnTop(true);
     setBackground(new java.awt.Color(39, 39, 39));
-    setModalityType(java.awt.Dialog.ModalityType.MODELESS);
     addWindowListener(new java.awt.event.WindowAdapter()
     {
       public void windowClosing(java.awt.event.WindowEvent evt)
@@ -182,7 +185,7 @@ public class NewOkCancelDialog extends javax.swing.JDialog
       }
     });
 
-    okButton.setText(bundle.getString("NewOkCancelDialog.okButton.text")); // NOI18N
+    okButton.setText(bundle.getString("EditAlbum.okButton.text")); // NOI18N
     okButton.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -191,7 +194,7 @@ public class NewOkCancelDialog extends javax.swing.JDialog
       }
     });
 
-    cancelButton.setText(bundle.getString("NewOkCancelDialog.cancelButton.text")); // NOI18N
+    cancelButton.setText(bundle.getString("EditAlbum.cancelButton.text")); // NOI18N
     cancelButton.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -202,10 +205,10 @@ public class NewOkCancelDialog extends javax.swing.JDialog
 
     jLabel1.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
     jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-    jLabel1.setText(bundle.getString("NewOkCancelDialog.jLabel1.text")); // NOI18N
+    jLabel1.setText(bundle.getString("EditAlbum.jLabel1.text")); // NOI18N
 
     titleTextField.setBackground(new java.awt.Color(204, 204, 204));
-    titleTextField.setText(bundle.getString("NewOkCancelDialog.titleTextField.text")); // NOI18N
+    titleTextField.setText(bundle.getString("EditAlbum.titleTextField.text")); // NOI18N
     titleTextField.setBorder(null);
     titleTextField.addCaretListener(new javax.swing.event.CaretListener()
     {
@@ -216,22 +219,22 @@ public class NewOkCancelDialog extends javax.swing.JDialog
     });
 
     searchTextField.setBackground(new java.awt.Color(204, 204, 204));
-    searchTextField.setText(bundle.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
+    searchTextField.setText(bundle1.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
     searchTextField.setBorder(null);
 
     jLabel3.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
     jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-    jLabel3.setText(bundle.getString("NewOkCancelDialog.jLabel3.text")); // NOI18N
+    jLabel3.setText(bundle.getString("EditAlbum.jLabel3.text")); // NOI18N
 
     jLabel4.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
     jLabel4.setForeground(new java.awt.Color(204, 204, 204));
-    jLabel4.setText(bundle.getString("NewOkCancelDialog.jLabel4.text")); // NOI18N
+    jLabel4.setText(bundle.getString("EditAlbum.jLabel4.text")); // NOI18N
 
     replaceTextField.setBackground(new java.awt.Color(204, 204, 204));
-    replaceTextField.setText(bundle.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
+    replaceTextField.setText(bundle1.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
     replaceTextField.setBorder(null);
 
-    applyButton.setText(bundle.getString("NewOkCancelDialog.applyButton.text")); // NOI18N
+    applyButton.setText(bundle.getString("EditAlbum.applyButton.text")); // NOI18N
     applyButton.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -242,8 +245,7 @@ public class NewOkCancelDialog extends javax.swing.JDialog
 
     icon.setBackground(new java.awt.Color(39, 39, 39));
     icon.setForeground(new java.awt.Color(255, 255, 255));
-    icon.setIcon(new javax.swing.ImageIcon("/home/aerr/NetBeansProjects/VideoManager/resources/unknown.jpg")); // NOI18N
-    icon.setText(bundle.getString("NewOkCancelDialog.icon.text")); // NOI18N
+    icon.setText(bundle.getString("EditAlbum.icon.text")); // NOI18N
     icon.setBorder(null);
     icon.setHideActionText(true);
     icon.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -254,21 +256,21 @@ public class NewOkCancelDialog extends javax.swing.JDialog
 
     jLabel5.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
     jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-    jLabel5.setText(bundle.getString("NewOkCancelDialog.jLabel5.text")); // NOI18N
+    jLabel5.setText(bundle.getString("EditAlbum.jLabel5.text")); // NOI18N
 
     jLabel6.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
     jLabel6.setForeground(new java.awt.Color(204, 204, 204));
-    jLabel6.setText(bundle.getString("NewOkCancelDialog.jLabel6.text")); // NOI18N
+    jLabel6.setText(bundle.getString("EditAlbum.jLabel6.text")); // NOI18N
 
     customSearchTextField.setBackground(new java.awt.Color(204, 204, 204));
-    customSearchTextField.setText(bundle.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
+    customSearchTextField.setText(bundle.getString("EditAlbum.customSearchTextField.text")); // NOI18N
 
     jLabel7.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
     jLabel7.setForeground(new java.awt.Color(204, 204, 204));
-    jLabel7.setText(bundle.getString("NewOkCancelDialog.jLabel7.text")); // NOI18N
+    jLabel7.setText(bundle.getString("EditAlbum.jLabel7.text")); // NOI18N
 
     directUrlTextField.setBackground(new java.awt.Color(204, 204, 204));
-    directUrlTextField.setText(bundle.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
+    directUrlTextField.setText(bundle1.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -357,7 +359,7 @@ public class NewOkCancelDialog extends javax.swing.JDialog
     );
 
     getRootPane().setDefaultButton(okButton);
-    titleTextField.getAccessibleContext().setAccessibleName(bundle.getString("NewOkCancelDialog.titleTextField.AccessibleContext.accessibleName")); // NOI18N
+    titleTextField.getAccessibleContext().setAccessibleName(bundle.getString("EditAlbum.titleTextField.AccessibleContext.accessibleName")); // NOI18N
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
@@ -411,7 +413,7 @@ public class NewOkCancelDialog extends javax.swing.JDialog
           new IconDownloader(button, icon, new URL(directUrlTextField.getText())).execute();
         } catch (MalformedURLException ex)
         {
-          Logger.getLogger(NewOkCancelDialog.class.getName()).log(Level.SEVERE, null, ex);
+          Logger.getLogger(EditAlbum.class.getName()).log(Level.SEVERE, null, ex);
         }
       else if (!customSearchTextField.getText().isEmpty())
         new IconDownloader(button, icon, customSearchTextField.getText()).execute();
