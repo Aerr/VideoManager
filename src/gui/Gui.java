@@ -149,7 +149,7 @@ public final class Gui extends JFrame
     if (!load_database)
       Prefs.getInstance().clear();
     FileWalker.getInstance().removeUnexistingEntries();
-    FileWalker.getInstance().getFiles("/home/aerr/Téléchargements/");
+    FileWalker.getInstance().getFiles("C:\\Users\\ROMAN\\Downloads");
     reloadList();
     updateSearchBar();
     new DatabaseSaver().execute();

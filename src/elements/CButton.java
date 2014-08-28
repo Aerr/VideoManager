@@ -39,8 +39,9 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
   private void initialize()
   {
     setForeground(Color.white);
-    setBackground(null);
-    setBorder(null);
+    setOpaque(false);
+    setContentAreaFilled(false);
+    setBorderPainted(false);
 
     if (name != null)
     {

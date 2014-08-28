@@ -68,7 +68,6 @@ package gui;
 import elements.CButton;
 import elements.IconDownloader;
 import elements.MediaElement;
-import gui.Gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -114,9 +113,9 @@ public class EditAlbum extends javax.swing.JDialog
     this.getContentPane().setBackground(new Color(39, 39, 39));
 
     titleTextField.setText(this.button.getText());
+    titleTextField.grabFocus();
     customSearchTextField.setText("");
     icon.setIcon(this.button.getIcon());
-    okButton.grabFocus();
 
     // Close the dialog when Esc is pressed
     String cancelName = "cancel";
@@ -151,7 +150,6 @@ public class EditAlbum extends javax.swing.JDialog
   private void initComponents()
   {
 
-    jLabel2 = new javax.swing.JLabel();
     okButton = new javax.swing.JButton();
     cancelButton = new javax.swing.JButton();
     jLabel1 = new javax.swing.JLabel();
@@ -169,12 +167,8 @@ public class EditAlbum extends javax.swing.JDialog
     jLabel7 = new javax.swing.JLabel();
     directUrlTextField = new javax.swing.JTextField();
 
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gui/Bundle"); // NOI18N
-    jLabel2.setText(bundle.getString("EditAlbum.jLabel2.text")); // NOI18N
-
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-    java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("elements/Bundle"); // NOI18N
-    setTitle(bundle1.getString("EditAlbum.title")); // NOI18N
+    setTitle("Edit Album");
     setAlwaysOnTop(true);
     setBackground(new java.awt.Color(39, 39, 39));
     addWindowListener(new java.awt.event.WindowAdapter()
@@ -185,7 +179,8 @@ public class EditAlbum extends javax.swing.JDialog
       }
     });
 
-    okButton.setText(bundle.getString("EditAlbum.okButton.text")); // NOI18N
+    okButton.setBackground(null);
+    okButton.setText("OK");
     okButton.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -194,7 +189,8 @@ public class EditAlbum extends javax.swing.JDialog
       }
     });
 
-    cancelButton.setText(bundle.getString("EditAlbum.cancelButton.text")); // NOI18N
+    cancelButton.setBackground(null);
+    cancelButton.setText("Cancel");
     cancelButton.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -205,11 +201,11 @@ public class EditAlbum extends javax.swing.JDialog
 
     jLabel1.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
     jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-    jLabel1.setText(bundle.getString("EditAlbum.jLabel1.text")); // NOI18N
+    jLabel1.setText("Title:");
 
     titleTextField.setBackground(new java.awt.Color(204, 204, 204));
-    titleTextField.setText(bundle.getString("EditAlbum.titleTextField.text")); // NOI18N
-    titleTextField.setBorder(null);
+    titleTextField.setText("jTextField1");
+    titleTextField.setBorder(javax.swing.BorderFactory.createCompoundBorder(null, javax.swing.BorderFactory.createEmptyBorder(4, 5, 4, 5)));
     titleTextField.addCaretListener(new javax.swing.event.CaretListener()
     {
       public void caretUpdate(javax.swing.event.CaretEvent evt)
@@ -217,24 +213,30 @@ public class EditAlbum extends javax.swing.JDialog
         titleTextFieldCaretUpdate(evt);
       }
     });
+    titleTextField.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        titleTextFieldActionPerformed(evt);
+      }
+    });
 
     searchTextField.setBackground(new java.awt.Color(204, 204, 204));
-    searchTextField.setText(bundle1.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
-    searchTextField.setBorder(null);
+    searchTextField.setBorder(titleTextField.getBorder());
 
     jLabel3.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
     jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-    jLabel3.setText(bundle.getString("EditAlbum.jLabel3.text")); // NOI18N
+    jLabel3.setText("Replace in files:");
 
     jLabel4.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
     jLabel4.setForeground(new java.awt.Color(204, 204, 204));
-    jLabel4.setText(bundle.getString("EditAlbum.jLabel4.text")); // NOI18N
+    jLabel4.setText("with");
 
     replaceTextField.setBackground(new java.awt.Color(204, 204, 204));
-    replaceTextField.setText(bundle1.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
-    replaceTextField.setBorder(null);
+    replaceTextField.setBorder(titleTextField.getBorder());
 
-    applyButton.setText(bundle.getString("EditAlbum.applyButton.text")); // NOI18N
+    applyButton.setBackground(null);
+    applyButton.setText("Apply");
     applyButton.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -245,32 +247,34 @@ public class EditAlbum extends javax.swing.JDialog
 
     icon.setBackground(new java.awt.Color(39, 39, 39));
     icon.setForeground(new java.awt.Color(255, 255, 255));
-    icon.setText(bundle.getString("EditAlbum.icon.text")); // NOI18N
     icon.setBorder(null);
+    icon.setBorderPainted(false);
+    icon.setContentAreaFilled(false);
     icon.setHideActionText(true);
     icon.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
     icon.setMaximumSize(Utils.ICON_DIMENSION);
     icon.setMinimumSize(Utils.ICON_DIMENSION);
+    icon.setOpaque(false);
     icon.setPreferredSize(Utils.ICON_DIMENSION);
     icon.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
     jLabel5.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
     jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-    jLabel5.setText(bundle.getString("EditAlbum.jLabel5.text")); // NOI18N
+    jLabel5.setText("Picture:");
 
     jLabel6.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
     jLabel6.setForeground(new java.awt.Color(204, 204, 204));
-    jLabel6.setText(bundle.getString("EditAlbum.jLabel6.text")); // NOI18N
+    jLabel6.setText("Custom search:");
 
     customSearchTextField.setBackground(new java.awt.Color(204, 204, 204));
-    customSearchTextField.setText(bundle.getString("EditAlbum.customSearchTextField.text")); // NOI18N
+    customSearchTextField.setBorder(titleTextField.getBorder());
 
     jLabel7.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
     jLabel7.setForeground(new java.awt.Color(204, 204, 204));
-    jLabel7.setText(bundle.getString("EditAlbum.jLabel7.text")); // NOI18N
+    jLabel7.setText("Direct URL:");
 
     directUrlTextField.setBackground(new java.awt.Color(204, 204, 204));
-    directUrlTextField.setText(bundle1.getString("NewOkCancelDialog.customSearchTextField.text")); // NOI18N
+    directUrlTextField.setBorder(titleTextField.getBorder());
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -359,7 +363,7 @@ public class EditAlbum extends javax.swing.JDialog
     );
 
     getRootPane().setDefaultButton(okButton);
-    titleTextField.getAccessibleContext().setAccessibleName(bundle.getString("EditAlbum.titleTextField.AccessibleContext.accessibleName")); // NOI18N
+    titleTextField.getAccessibleContext().setAccessibleName("");
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
@@ -392,6 +396,11 @@ public class EditAlbum extends javax.swing.JDialog
       return;
     customSearchTextField.setText(titleTextField.getText());
   }//GEN-LAST:event_titleTextFieldCaretUpdate
+
+  private void titleTextFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_titleTextFieldActionPerformed
+  {//GEN-HEADEREND:event_titleTextFieldActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_titleTextFieldActionPerformed
 
   private void doClose(int retStatus)
   {
@@ -442,7 +451,6 @@ public class EditAlbum extends javax.swing.JDialog
   private javax.swing.JTextField directUrlTextField;
   private javax.swing.JButton icon;
   private javax.swing.JLabel jLabel1;
-  private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
