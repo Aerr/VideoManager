@@ -2,6 +2,9 @@ db-files
 thumbs/
 .jpg
 nbproject/private/
+*.db
+*.ini
+VideoManager
 
 #################
 ## Eclipse

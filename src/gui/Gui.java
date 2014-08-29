@@ -181,8 +181,6 @@ public final class Gui extends JFrame
 
     add(mediaGrid);
 
-    searchBar.setText(Prefs.getInstance().getPrefs().get("Last-Prefs-SearchBar", ""));
-
     pack();
     setVisible(true);
   }

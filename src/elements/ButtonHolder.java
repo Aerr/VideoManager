@@ -5,15 +5,21 @@ import actions.RemoveAction;
 import actions.SeenToggleAction;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.TreeSet;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.RowFilter;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import misc.Utils;
@@ -29,7 +35,7 @@ public final class ButtonHolder extends JPanel
   {
     super(new BorderLayout());
     ((BorderLayout) this.getLayout()).setHgap(60);
-    setBackground(null);
+    setOpaque(false);
 
     this.cButton = cButton;
 
@@ -55,7 +61,7 @@ public final class ButtonHolder extends JPanel
     table.setShowVerticalLines(false);
     table.setGridColor(Color.gray);
     table.setForeground(Color.white);
-    table.setBackground(null);
+    table.setOpaque(false);
 
     final Object[] mediasArray = medias.toArray();
     final CCellEditor cCellEditor = new CCellEditor(table, mediasArray);
@@ -79,9 +85,8 @@ public final class ButtonHolder extends JPanel
 
     filter("");
 
-
     JPanel tableHolder = new JPanel();
-    tableHolder.setBackground(null);
+    tableHolder.setOpaque(false);
     tableHolder.setLayout(new BoxLayout(tableHolder, BoxLayout.PAGE_AXIS));
     tableHolder.add(Box.createVerticalGlue());
     tableHolder.add(table);
@@ -91,15 +96,52 @@ public final class ButtonHolder extends JPanel
     if (medias.size() <= 6)
       setMaximumSize(new Dimension(9999, Utils.ICON_DIMENSION.height));
 
-
     JPanel pictureHolder = new JPanel();
-    pictureHolder.setBackground(null);
+    pictureHolder.setOpaque(false);
     pictureHolder.setLayout(new BoxLayout(pictureHolder, BoxLayout.PAGE_AXIS));
     pictureHolder.add(cButton);
     pictureHolder.add(Box.createVerticalGlue());
 
+    JPanel imdbHolder = new JPanel();
+    imdbHolder.setOpaque(false);
+    imdbHolder.setLayout(new BoxLayout(imdbHolder, BoxLayout.PAGE_AXIS));
+    String[] infos =
+    {
+      "<html><h1 style=\"margin-bottom: 0px;\">American Hustle</h1></html>",
+      "<html><p style=\"margin-top: 0px;\">2013 <b>·</b> 138 min <b>·</b> Crime, Drama</p></html>",
+      "David O. Russel"
+    };
+
+    for (String string : infos)
+    {
+      JLabel jLabel = new JLabel(string, SwingConstants.RIGHT);
+      jLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+      jLabel.setForeground(Color.WHITE);
+      imdbHolder.add(jLabel);
+    }
+
+    String star = "<div style=\""
+                  + "width: 50px; height: 45px; padding-top: 17px; text-align: center;"
+                  + "display: inline-block;"
+                  + "background-repeat: no-repeat; background-image: url(file:resources/star.png);\">"
+                  + "7.6</div><div style=\"margin-bottom: 15px;\"></div>";
+
+    JButton jButton = new JButton("<html><body>" + star + "</body></html>");
+    jButton.setHorizontalAlignment(SwingConstants.RIGHT);
+    jButton.setOpaque(false);
+    jButton.setContentAreaFilled(false);
+    jButton.setBorderPainted(false);
+    jButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+    jButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    jButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+    imdbHolder.add(jButton);
+    imdbHolder.add(Box.createVerticalGlue());
+
     this.add(tableHolder, BorderLayout.CENTER);
     this.add(pictureHolder, BorderLayout.LINE_START);
+    this.add(imdbHolder, BorderLayout.EAST);
   }
 
   public void filter(final String search)

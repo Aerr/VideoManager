@@ -36,18 +36,6 @@ public class MediaElement implements Comparable<MediaElement>, Externalizable
     this.parent = parent;
   }
 
-  public static void main(String[] args)
-  {
-    String toFormat = "friends_s01_e02";
-    System.out.println(toFormat);
-    toFormat = toFormat.substring(0, 1).toUpperCase() + toFormat.substring(1);
-    toFormat = toFormat.replaceAll("[s]([0-9])", "S$1");
-    toFormat = toFormat.replaceAll("[e]([0-9])", "E$1");
-    toFormat = toFormat.replaceAll("_", " ");
-
-    System.out.println(toFormat);
-  }
-
   public MediaElement(String name, String path, boolean seen, CButton parent)
   {
     this(name, path, "", seen, parent);

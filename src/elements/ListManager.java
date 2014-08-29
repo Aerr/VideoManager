@@ -26,7 +26,7 @@ public class ListManager
 
   private static Gui gui = Gui.getInstance();
   private static JPanel jPanel;
-  private static final JTextField searchBar = new JTextField();
+  private static final JTextField searchBar = new JTextField(Prefs.getInstance().getPrefs().get("Last-Prefs-SearchBar", ""));
   private static Component[] defaultList;
 
   public static void searchBarUpdate()
