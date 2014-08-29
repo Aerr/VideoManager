@@ -57,7 +57,6 @@ public class FileWalker
 
   public TreeSet<CButton> getFiles(String path)
   {
-    new File("thumbs").mkdirs();
     walk(path, null);
     return setButtons;
   }

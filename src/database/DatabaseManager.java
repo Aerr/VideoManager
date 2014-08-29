@@ -19,11 +19,11 @@ import listing.FileWalker;
 public class DatabaseManager
 {
 
-  static public boolean load_database()
+  static public boolean load_database(String name)
   {
     try
     {
-      FileInputStream file = new FileInputStream("db-files");
+      FileInputStream file = new FileInputStream(name.hashCode() + ".db");
       GZIPInputStream gzis = new GZIPInputStream(file);
       try (ObjectInputStream ois = new ObjectInputStream(gzis))
       {
@@ -32,6 +32,8 @@ public class DatabaseManager
       }
     } catch (java.io.IOException | ClassNotFoundException ex)
     {
+      System.err.format("IOException: %s%n", ex);
+      FileWalker.getInstance().setSetButtons(new TreeSet());
       return false;
     }
     return true;

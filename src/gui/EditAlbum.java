@@ -1,68 +1,3 @@
-/*
- * To chang
- @Override
- public Rectangle getBounds()
- {
- System.out.println("getBounds");
- }
-
- @Override
- public Rectangle2D getBounds2D()
- {
- System.out.println("getBounds2D");
- }
-
- @Override
- public boolean contains(double arg0, double arg1)
- {
- System.out.println("contains");
- }
-
- @Override
- public boolean contains(Point2D p)
- {
- System.out.println("contains");
- }
-
- @Override
- public boolean intersects(double arg0, double arg1, double arg2, double arg3)
- {
- System.out.println("intersects");
- }
-
- @Override
- public boolean intersects(Rectangle2D r)
- {
- System.out.println("intersects");
- }
-
- @Override
- public boolean contains(double arg0, double arg1, double arg2, double arg3)
- {
- System.out.println("contains");
- }
-
- @Override
- public boolean contains(Rectangle2D r)
- {
- System.out.println("contains");
- }
-
- @Override
- public PathIterator getPathIterator(AffineTransform at)
- {
- System.out.println("getPathIterator");
- }
-
- @Override
- public PathIterator getPathIterator(AffineTransform arg0, double arg1)
- {
- System.out.println("getPathIterator");
- }
- } this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import database.DatabaseSaver;
@@ -126,7 +61,6 @@ public class EditAlbum extends javax.swing.JDialog
     customSearchTextField.setText("");
     icon.setIcon(this.button.getIcon());
 
-    // Close the dialog when Esc is pressed
     String cancelName = "cancel";
     InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
@@ -198,7 +132,7 @@ public class EditAlbum extends javax.swing.JDialog
       }
     });
 
-    okButton.setBackground(null);
+    okButton.setBackground(removeButton.getBackground());
     okButton.setText("OK");
     okButton.addActionListener(new java.awt.event.ActionListener()
     {
@@ -208,7 +142,7 @@ public class EditAlbum extends javax.swing.JDialog
       }
     });
 
-    cancelButton.setBackground(null);
+    cancelButton.setBackground(removeButton.getBackground());
     cancelButton.setText("Cancel");
     cancelButton.addActionListener(new java.awt.event.ActionListener()
     {
@@ -247,7 +181,7 @@ public class EditAlbum extends javax.swing.JDialog
     replaceTextField.setBackground(new java.awt.Color(204, 204, 204));
     replaceTextField.setBorder(titleTextField.getBorder());
 
-    applyButton.setBackground(null);
+    applyButton.setBackground(removeButton.getBackground());
     applyButton.setText("Apply");
     applyButton.addActionListener(new java.awt.event.ActionListener()
     {
@@ -259,8 +193,6 @@ public class EditAlbum extends javax.swing.JDialog
 
     icon.setBackground(new java.awt.Color(89, 89, 89));
     icon.setForeground(new java.awt.Color(255, 255, 255));
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gui/Bundle"); // NOI18N
-    icon.setText(bundle.getString("EditAlbum.icon.text")); // NOI18N
     icon.setBorder(null);
     icon.setBorderPainted(false);
     icon.setContentAreaFilled(false);
@@ -290,8 +222,8 @@ public class EditAlbum extends javax.swing.JDialog
     directUrlTextField.setBackground(new java.awt.Color(204, 204, 204));
     directUrlTextField.setBorder(titleTextField.getBorder());
 
-    java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("elements/Bundle"); // NOI18N
-    removeButton.setText(bundle1.getString("NewOkCancelDialog.removeButton.text")); // NOI18N
+    removeButton.setBackground((System.getProperty("os.name").equals("Linux")) ? new Color(150, 150, 150) : null);
+    removeButton.setText("Remove");
     removeButton.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -432,13 +364,13 @@ public class EditAlbum extends javax.swing.JDialog
   {
     returnStatus = retStatus;
     if (returnStatus == RET_REMOVE)
-      addAndRemoveButton();
+      addAndRemoveButton(true);
     else if (returnStatus != RET_CANCEL)
     {
       if (!button.getText().equals(titleTextField.getText()))
       {
         button.setText(titleTextField.getText());
-        addAndRemoveButton();
+        addAndRemoveButton(false);
         Gui.getInstance().updateSearchBar();
         if (customSearchTextField.getText().isEmpty()
             && directUrlTextField.getText().isEmpty())
@@ -474,14 +406,18 @@ public class EditAlbum extends javax.swing.JDialog
     }
   }
 
-  private void addAndRemoveButton()
+  private void addAndRemoveButton(boolean justRemove)
   {
     boolean added = false;
     for (Iterator<CButton> it = FileWalker.getInstance().getSetButtons().iterator(); it.hasNext();)
     {
       CButton cButton = it.next();
       if (cButton == button)
+      {
         it.remove();
+        if (justRemove)
+          return;
+      }
       else if (!added && button.getText().equals(cButton.getText()))
       {
         added = true;

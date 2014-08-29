@@ -31,12 +31,10 @@ public class CCellRenderer extends DefaultTableCellRenderer
     isSelected = isSelected && (table.hasFocus() || Utils.isContextMenuDisplayed(media));
     final Component superResult = super.getTableCellRendererComponent(table, value,
                                                                       isSelected, hasFocus, row, column);
-
     if (isSelected)
       superResult.setBackground(Color.darkGray);
     else
-      superResult.setBackground(null);
-
+      superResult.setBackground(new Color(39, 39, 39));
     if (media != null)
       if (media.getSeen())
         superResult.setForeground(Color.gray);

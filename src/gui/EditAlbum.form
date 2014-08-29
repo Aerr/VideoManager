@@ -138,7 +138,7 @@
     <Component class="javax.swing.JButton" name="okButton">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="null" type="code"/>
+          <Connection component="removeButton" name="background" type="property"/>
         </Property>
         <Property name="text" type="java.lang.String" value="OK"/>
       </Properties>
@@ -152,7 +152,7 @@
     <Component class="javax.swing.JButton" name="cancelButton">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="null" type="code"/>
+          <Connection component="removeButton" name="background" type="property"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Cancel"/>
       </Properties>
@@ -241,7 +241,7 @@
     <Component class="javax.swing.JButton" name="applyButton">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="null" type="code"/>
+          <Connection component="removeButton" name="background" type="property"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Apply"/>
       </Properties>
@@ -256,9 +256,6 @@
         </Property>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
-        </Property>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gui/Bundle.properties" key="EditAlbum.icon.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="null"/>
@@ -340,9 +337,10 @@
     </Component>
     <Component class="javax.swing.JButton" name="removeButton">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="elements/Bundle.properties" key="NewOkCancelDialog.removeButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="(System.getProperty(&quot;os.name&quot;).equals(&quot;Linux&quot;)) ? new Color(150, 150, 150) : null" type="code"/>
         </Property>
+        <Property name="text" type="java.lang.String" value="Remove"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeButtonActionPerformed"/>

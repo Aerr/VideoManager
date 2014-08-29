@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package database;
 
+import database.LocationsManager.Location;
 import gui.Gui;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -17,12 +17,14 @@ import listing.FileWalker;
 
 public class DatabaseSaver extends SwingWorker<Void, Void>
 {
+
   @Override
   protected Void doInBackground() throws Exception
   {
     try
     {
-      FileOutputStream fos = new FileOutputStream("db-files");
+      final String name = ((Location) Gui.getInstance().getjComboBox().getSelectedItem()).getPath();
+      FileOutputStream fos = new FileOutputStream(name.hashCode() + ".db");
       GZIPOutputStream gzos = new GZIPOutputStream(fos);
       try (ObjectOutputStream oos = new ObjectOutputStream(gzos))
       {

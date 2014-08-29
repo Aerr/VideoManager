@@ -3,6 +3,8 @@ package gui;
 import database.DatabaseManager;
 import database.DatabaseSaver;
 import database.FilePlayer;
+import database.LocationsManager;
+import database.LocationsManager.Location;
 import elements.ButtonHolder;
 import elements.CButton;
 import java.awt.Color;
@@ -12,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -41,6 +44,7 @@ public final class Gui extends JFrame
   private final JPanel jPanel;
   private final JButton stopButton;
   private JTextField searchBar;
+  private final JComboBox jComboBox;
 
   /**
    * @return the stopButton
@@ -58,6 +62,15 @@ public final class Gui extends JFrame
     return jPanel;
   }
 
+  /**
+   * @return the jComboBox
+   */
+  public JComboBox getjComboBox()
+  {
+    return jComboBox;
+  }
+
+// <editor-fold defaultstate="collapsed" desc="Singleton">
   private static class GuiHolder
   {
 
@@ -68,6 +81,7 @@ public final class Gui extends JFrame
   {
     return GuiHolder.instance;
   }
+// </editor-fold>
 
   private Gui()
   {
@@ -97,10 +111,18 @@ public final class Gui extends JFrame
     fileChooser.setDialogTitle("Add a new location");
     fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     fileChooser.setAcceptAllFileFilterUsed(false);
-    final JComboBox jComboBox = new JComboBox();
-    jComboBox.addItem("");
+
+    final LocationsManager.Location[] locations = LocationsManager.getLocations();
     final String add_new_location = "Add new location...";
+
+    jComboBox = new JComboBox();
+    jComboBox.addItem("");
+    if (locations != null)
+      for (LocationsManager.Location location : locations)
+        jComboBox.addItem(location);
+
     jComboBox.addItem(add_new_location);
+
     jComboBox.addItemListener(new ItemListener()
     {
       @Override
@@ -110,12 +132,41 @@ public final class Gui extends JFrame
         {
           int returnVal = fileChooser.showOpenDialog(Gui.this);
           if (returnVal == JFileChooser.APPROVE_OPTION)
-            System.out.println("getSelectedFile() : " + fileChooser.getSelectedFile());
+          {
+            final int itemCount = jComboBox.getItemCount();
+            final File selectedFile = fileChooser.getSelectedFile();
+
+            for (int i = 0; i < itemCount; i++)
+            {
+              final Object itemAt = jComboBox.getItemAt(i);
+              if (itemAt.getClass() == Location.class)
+              {
+                Location it = (Location) itemAt;
+                if (it.getPath().equals(selectedFile.getAbsolutePath()))
+                {
+                  jComboBox.setSelectedItem(it);
+                  return;
+                }
+              }
+            }
+
+            final LocationsManager.Location location = new Location(selectedFile);
+            LocationsManager.addLocation(location);
+            jComboBox.insertItemAt(location, itemCount - 1);
+            if (itemCount == 2 && jComboBox.getItemAt(0).toString().isEmpty())
+              jComboBox.removeItemAt(0);
+            jComboBox.setSelectedItem(location);
+            initDatabase(location);
+          }
         }
+        else if (e.getStateChange() == ItemEvent.SELECTED)
+          initDatabase((Location) e.getItem());
       }
     });
 
     jMenuBar.add(jComboBox);
+    if (locations != null)
+      jComboBox.removeItemAt(0);
 
     jMenuBar.add(refresh);
     stopButton = new JButton("Stop");
@@ -137,19 +188,18 @@ public final class Gui extends JFrame
     add(mediaGrid);
 
     searchBar.setText(Prefs.getInstance().getPrefs().get("Last-Prefs-SearchBar", ""));
-    initDatabase();
 
     pack();
     setVisible(true);
   }
 
-  private void initDatabase()
+  private void initDatabase(Location location)
   {
-    boolean load_database = DatabaseManager.load_database();
+    boolean load_database = DatabaseManager.load_database(location.getPath());
     if (!load_database)
       Prefs.getInstance().clear();
     FileWalker.getInstance().removeUnexistingEntries();
-    FileWalker.getInstance().getFiles("C:\\Users\\ROMAN\\Downloads");
+    FileWalker.getInstance().getFiles(location.getPath());
     reloadList();
     updateSearchBar();
     new DatabaseSaver().execute();
@@ -187,7 +237,7 @@ public final class Gui extends JFrame
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        initDatabase();
+        initDatabase((Location) getjComboBox().getSelectedItem());
       }
     });
     return refresh;
@@ -196,6 +246,7 @@ public final class Gui extends JFrame
   private void searchBarInit()
   {
     searchBar = new JTextField();
+
     searchBar.addCaretListener(new CaretListener()
     {
 
