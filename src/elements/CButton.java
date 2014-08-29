@@ -32,7 +32,8 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
   {
     super();
     medias = new TreeSet<>();
-    this.name = name;
+    this.name = Utils.formatName(name);
+
     initialize();
   }
 

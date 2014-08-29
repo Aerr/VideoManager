@@ -9,9 +9,11 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import misc.Utils;
 
 public class MediaElement implements Comparable<MediaElement>, Externalizable
 {
+
   private static final long serialVersionUID = 1L;
 
   private String name;
@@ -27,11 +29,23 @@ public class MediaElement implements Comparable<MediaElement>, Externalizable
 
   public MediaElement(String name, String path, String tag, boolean seen, CButton parent)
   {
-    this.name = name;
+    this.name = Utils.formatName(name);
     this.path = path;
     this.tag = tag;
     this.seen = seen;
     this.parent = parent;
+  }
+
+  public static void main(String[] args)
+  {
+    String toFormat = "friends_s01_e02";
+    System.out.println(toFormat);
+    toFormat = toFormat.substring(0, 1).toUpperCase() + toFormat.substring(1);
+    toFormat = toFormat.replaceAll("[s]([0-9])", "S$1");
+    toFormat = toFormat.replaceAll("[e]([0-9])", "E$1");
+    toFormat = toFormat.replaceAll("_", " ");
+
+    System.out.println(toFormat);
   }
 
   public MediaElement(String name, String path, boolean seen, CButton parent)

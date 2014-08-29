@@ -36,6 +36,7 @@ public class Utils
   };
   private static MediaElement currentContextMenu;
   private static ImageIcon unknownIcon;
+
   static
   {
     try
@@ -67,6 +68,16 @@ public class Utils
         i = (i == -1) ? lastIndexOf : Math.min(i, lastIndexOf);
     }
     return i;
+  }
+
+  public static String formatName(String toFormat)
+  {
+    toFormat = toFormat.substring(0, 1).toUpperCase() + toFormat.substring(1);
+    toFormat = toFormat.replaceAll("[s]([0-9])", "S$1");
+    toFormat = toFormat.replaceAll("[e]([0-9])", "E$1");
+    toFormat = toFormat.replaceAll("_", " ");
+
+    return toFormat;
   }
 
   /**
