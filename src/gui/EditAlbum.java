@@ -3,6 +3,7 @@ package gui;
 import database.DatabaseSaver;
 import elements.CButton;
 import elements.IconDownloader;
+import elements.ListManager;
 import elements.MediaElement;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -371,7 +372,7 @@ public class EditAlbum extends javax.swing.JDialog
       {
         button.setText(titleTextField.getText());
         addAndRemoveButton(false);
-        Gui.getInstance().updateSearchBar();
+        ListManager.searchBarUpdate();
         if (customSearchTextField.getText().isEmpty()
             && directUrlTextField.getText().isEmpty())
           new IconDownloader(button, icon).execute();
@@ -394,13 +395,17 @@ public class EditAlbum extends javax.swing.JDialog
       {
         for (MediaElement mediaElement : button.getMedias())
           mediaElement.setName(mediaElement.getName().replace(search, replace));
-        Gui.getInstance().updateSearchBar();
+        ListManager.searchBarUpdate();
       }
     }
 
     if (returnStatus != RET_APPLY)
     {
-      new DatabaseSaver().execute();
+      if (returnStatus != RET_CANCEL)
+      {
+        ListManager.reloadList(true);
+        new DatabaseSaver().execute();
+      }
       setVisible(false);
       dispose();
     }
@@ -418,6 +423,7 @@ public class EditAlbum extends javax.swing.JDialog
         if (justRemove)
           return;
       }
+      // Merge with other album with the same name
       else if (!added && button.getText().equals(cButton.getText()))
       {
         added = true;
@@ -425,7 +431,7 @@ public class EditAlbum extends javax.swing.JDialog
           cButton.getMedias().add(mediaElement);
       }
     }
-
+    // If not merge, simply add
     if (!added)
       FileWalker.getInstance().getSetButtons().add(button);
   }

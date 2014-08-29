@@ -5,8 +5,8 @@
  */
 package actions;
 
+import elements.ListManager;
 import elements.MediaElement;
-import gui.Gui;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -29,7 +29,7 @@ public class RemoveAction extends CAbstractAction
       else
         media.setVisible(false);
 
-    Gui.getInstance().updateSearchBar();
+    ListManager.searchBarUpdate();
   }
 
   public RemoveAction()

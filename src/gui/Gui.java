@@ -5,22 +5,18 @@ import database.DatabaseSaver;
 import database.FilePlayer;
 import database.LocationsManager;
 import database.LocationsManager.Location;
-import elements.ButtonHolder;
-import elements.CButton;
+import elements.ListManager;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -30,8 +26,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import listing.FileWalker;
 import listing.Prefs;
 import misc.CustomUIManager;
@@ -100,7 +94,7 @@ public final class Gui extends JFrame
 
     JMenuBar jMenuBar = new JMenuBar();
 
-    searchBarInit();
+    searchBar = ListManager.searchBarInit(jPanel);
     jMenuBar.add(searchBar);
     JButton refresh = refreshButtonInit();
 
@@ -200,14 +194,8 @@ public final class Gui extends JFrame
       Prefs.getInstance().clear();
     FileWalker.getInstance().removeUnexistingEntries();
     FileWalker.getInstance().getFiles(location.getPath());
-    reloadList();
-    updateSearchBar();
+    ListManager.searchBarUpdate();
     new DatabaseSaver().execute();
-  }
-
-  public void updateSearchBar()
-  {
-    searchBar.getCaretListeners()[0].caretUpdate(null);
   }
 
   private void shutdownHook()
@@ -243,40 +231,6 @@ public final class Gui extends JFrame
     return refresh;
   }
 
-  private void searchBarInit()
-  {
-    searchBar = new JTextField();
-
-    searchBar.addCaretListener(new CaretListener()
-    {
-
-      @Override
-      public void caretUpdate(CaretEvent arg0)
-      {
-        reloadList();
-        boolean removed = false;
-        for (Component component : Gui.this.getjPanel().getComponents())
-          if (component.getClass() == ButtonHolder.class)
-          {
-            ButtonHolder holder = (ButtonHolder) component;
-            if (holder.toString().toLowerCase().contains(searchBar.getText().toLowerCase()))
-              continue;
-            holder.filter(searchBar.getText());
-            removed = holder.getRowCount() <= 0;
-            if (removed)
-              Gui.this.getjPanel().remove(component);
-          }
-          else if (removed)
-          {
-            Gui.this.getjPanel().remove(component);
-            removed = false;
-          }
-        Prefs.getInstance().getPrefs().put("Last-Prefs-SearchBar", searchBar.getText());
-      }
-    }
-    );
-  }
-
   private JScrollPane mediaGridInit()
   {
     jPanel.setBackground(new Color(39, 39, 39));
@@ -290,26 +244,5 @@ public final class Gui extends JFrame
     jScrollPane.setBackground(null);
 
     return jScrollPane;
-  }
-
-  public void reloadList()
-  {
-    final TreeSet<CButton> files = FileWalker.getInstance().getSetButtons();
-    populateList(files);
-  }
-
-  private void populateList(final TreeSet<CButton> files)
-  {
-    jPanel.removeAll();
-
-    for (CButton cButton : files)
-    {
-      if (cButton.isVisible())
-        jPanel.add(new ButtonHolder(cButton));
-      jPanel.add(Box.createRigidArea(new Dimension(1, 50)));
-    }
-
-    revalidate();
-    repaint();
   }
 }
