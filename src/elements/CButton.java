@@ -20,11 +20,13 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
 
   private TreeSet<MediaElement> medias;
   private String name;
+  private final String[] imdbInfos;
 
   public CButton()
   {
     super();
     medias = new TreeSet<>();
+    imdbInfos = new String[7];
     this.name = "Loading...";
   }
 
@@ -33,6 +35,7 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     super();
     medias = new TreeSet<>();
     this.name = Utils.formatName(name);
+    imdbInfos = new String[7];
 
     initialize();
   }
@@ -103,6 +106,7 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     else
       out.writeObject(this.getIcon());
     out.writeObject(medias);
+    out.writeObject(getImdbInfos());
   }
 
   @Override
@@ -113,6 +117,10 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
     medias = (TreeSet<MediaElement>) in.readObject();
     for (MediaElement mediaElement : medias)
       mediaElement.setParent(this);
+    String[] infos = (String[]) in.readObject();
+    for (int i = 0; i < imdbInfos.length; i++)
+      imdbInfos[i] = infos[i];
+
     initialize();
   }
 
@@ -128,4 +136,13 @@ public class CButton extends JButton implements Comparable<CButton>, Externaliza
   {
     return medias;
   }
+
+  /**
+   * @return the imdbInfos
+   */
+  public String[] getImdbInfos()
+  {
+    return imdbInfos;
+  }
+
 }

@@ -64,7 +64,7 @@ public class CCellEditor extends DefaultCellEditor implements MouseListener
 
     final String newName = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
     getSelected().setName(newName);
-    new DatabaseSaver().execute();
+    DatabaseSaver.save();
   }
 
   private MediaElement getSelected()

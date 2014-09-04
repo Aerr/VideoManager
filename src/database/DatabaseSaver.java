@@ -17,6 +17,10 @@ import listing.FileWalker;
 
 public class DatabaseSaver extends SwingWorker<Void, Void>
 {
+  public static void save()
+  {
+    new DatabaseSaver().execute();
+  }
 
   @Override
   protected Void doInBackground() throws Exception

@@ -7,9 +7,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -31,13 +39,13 @@ public final class ButtonHolder extends JPanel
   private final CButton cButton;
   private final JTable table;
 
-  public ButtonHolder(CButton cButton)
+  public ButtonHolder(CButton cButtonArg)
   {
     super(new BorderLayout());
     ((BorderLayout) this.getLayout()).setHgap(60);
     setOpaque(false);
 
-    this.cButton = cButton;
+    cButton = cButtonArg;
 
     final String[] columnNames =
     {
@@ -105,43 +113,104 @@ public final class ButtonHolder extends JPanel
     JPanel imdbHolder = new JPanel();
     imdbHolder.setOpaque(false);
     imdbHolder.setLayout(new BoxLayout(imdbHolder, BoxLayout.PAGE_AXIS));
-    String[] infos =
-    {
-      "<html><h1 style=\"margin-bottom: 0px;\">American Hustle</h1></html>",
-      "<html><p style=\"margin-top: 0px;\">2013 <b>·</b> 138 min <b>·</b> Crime, Drama</p></html>",
-      "David O. Russel"
-    };
 
-    for (String string : infos)
+    final boolean hasInfos = cButton.getImdbInfos()[0] != null;
+    if (hasInfos)
     {
-      JLabel jLabel = new JLabel(string, SwingConstants.RIGHT);
-      jLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+      String[] infos =
+      {
+        "<html><p style=\"margin-top: 0px;\">"
+        + cButton.getImdbInfos()[1]
+        + " <b>·</b> "
+        + cButton.getImdbInfos()[2]
+        + " <b>·</b> "
+        + cButton.getImdbInfos()[3]
+        + "</p></html>",
+        cButton.getImdbInfos()[4]
+      };
 
-      jLabel.setForeground(Color.WHITE);
-      imdbHolder.add(jLabel);
+      for (String string : infos)
+      {
+        JLabel jLabel = new JLabel(string, SwingConstants.RIGHT);
+        jLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        jLabel.setForeground(Color.WHITE);
+        imdbHolder.add(jLabel);
+      }
+
+      String star = "<div style=\""
+                    + "width: 50px; height: 45px; padding-top: 17px; text-align: center;"
+                    + "display: inline-block;"
+                    + "background-repeat: no-repeat; background-image: url(file:resources/star.png);\">"
+                    + cButton.getImdbInfos()[5]
+                    + "</div><div style=\"margin-bottom: 15px;\"></div>";
+
+      JButton jButton = new JButton("<html><body>" + star + "</body></html>");
+      jButton.setHorizontalAlignment(SwingConstants.RIGHT);
+      jButton.setOpaque(false);
+      jButton.setContentAreaFilled(false);
+      jButton.setBorderPainted(false);
+      jButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+      jButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      jButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+      jButton.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          openWebpage(cButton.getImdbInfos()[6]);
+        }
+      });
+
+      imdbHolder.add(jButton);
+      imdbHolder.add(Box.createVerticalGlue());
     }
+    else
+    {
+      final JButton jButton = new JButton("Get IMDb Infos");
+      jButton.addActionListener(new ActionListener()
+      {
 
-    String star = "<div style=\""
-                  + "width: 50px; height: 45px; padding-top: 17px; text-align: center;"
-                  + "display: inline-block;"
-                  + "background-repeat: no-repeat; background-image: url(file:resources/star.png);\">"
-                  + "7.6</div><div style=\"margin-bottom: 15px;\"></div>";
-
-    JButton jButton = new JButton("<html><body>" + star + "</body></html>");
-    jButton.setHorizontalAlignment(SwingConstants.RIGHT);
-    jButton.setOpaque(false);
-    jButton.setContentAreaFilled(false);
-    jButton.setBorderPainted(false);
-    jButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-    jButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    jButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-    imdbHolder.add(jButton);
-    imdbHolder.add(Box.createVerticalGlue());
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          jButton.setEnabled(false);
+          IMDbDownloader.downloadIMDBinfos(cButton);
+        }
+      });
+      imdbHolder.add(jButton);
+    }
 
     this.add(tableHolder, BorderLayout.CENTER);
     this.add(pictureHolder, BorderLayout.LINE_START);
-    this.add(imdbHolder, BorderLayout.EAST);
+    this.add(imdbHolder, BorderLayout.LINE_END);
+
+    if (hasInfos)
+    {
+      JLabel title = new JLabel("<html><h1 style=\"margin: 0px;\">"
+                                + cButton.getImdbInfos()[0]
+                                + "</h1></html>", SwingConstants.RIGHT);
+      title.setAlignmentX(Component.RIGHT_ALIGNMENT);
+      title.setForeground(Color.WHITE);
+      this.add(title, BorderLayout.PAGE_START);
+    }
+  }
+
+  public static void openWebpage(String url)
+  {
+    try
+    {
+      URI uri = new URI(url);
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE))
+        desktop.browse(uri);
+    } catch (URISyntaxException ex)
+    {
+      Logger.getLogger(ButtonHolder.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex)
+    {
+      Logger.getLogger(ButtonHolder.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
 
   public void filter(final String search)

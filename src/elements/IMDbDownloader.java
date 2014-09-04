@@ -5,15 +5,13 @@
  */
 package elements;
 
-import static elements.IconDownloader.start;
+import database.DatabaseSaver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,6 +23,11 @@ import org.json.JSONObject;
 public class IMDbDownloader extends SwingWorker<Void, Void>
 {
 
+  public static void downloadIMDBinfos(CButton button)
+  {
+    new IMDbDownloader(button).execute();
+  }
+
   private final CButton button;
 
   public IMDbDownloader(CButton button)
@@ -33,42 +36,13 @@ public class IMDbDownloader extends SwingWorker<Void, Void>
   }
 
   @Override
-  protected Void doInBackground() throws Exception
+  protected Void doInBackground()
   {
-    String[] split = null;
 
-    String search = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=";
-    search += button.getName().replace(" ", "+") + "+imdb";
-    URL url = new URL(search);
-
-    URLConnection connection = url.openConnection();
-
-    String line;
-    StringBuilder builder = new StringBuilder();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-    while ((line = reader.readLine()) != null)
-      builder.append(line);
-
-    String imageUrl = builder.toString();
-    imageUrl = imageUrl.substring(imageUrl.indexOf(start) + start.length());
-    split = imageUrl.split("\"url\":\"");
-
-    for (String string : split)
-      if (string.contains("www.imdb.com"))
-      {
-        System.out.println(string);
-        break;
-      }
-
-    return null;
-  }
-
-  public static void main(String[] args)
-  {
+    String search = "https://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=";
+    search += button.getText().replace(" ", "+") + "+imdb";
     try
     {
-      String search = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=";
-      search += "American Hustle (2013)".replace(" ", "+") + "+imdb";
       URL url = new URL(search);
 
       URLConnection connection = url.openConnection();
@@ -81,15 +55,17 @@ public class IMDbDownloader extends SwingWorker<Void, Void>
 
       JSONObject obj = new JSONObject(builder.toString());
       final JSONArray arr = obj.getJSONObject("responseData").getJSONArray("results");
+
       for (int i = 0; i < arr.length(); i++)
       {
         String string = arr.getJSONObject(i).getString("url");
-        if (string.contains("www.imdb.com"))
+        if (string.contains("title/tt"))
         {
           final int start = string.indexOf("/tt");
           if (start >= 0)
           {
-            search = "http://www.omdbapi.com/?i=" + string.substring(start + 1, string.length() - 1);
+            string = string.substring(start + 1);
+            search = "http://www.omdbapi.com/?i=" + string.substring(0, string.indexOf("/"));
             url = new URL(search);
             connection = url.openConnection();
 
@@ -99,27 +75,26 @@ public class IMDbDownloader extends SwingWorker<Void, Void>
               builder.append(line);
 
             obj = new JSONObject(builder.toString());
-            String[] imdbInfos =
-            {
-              obj.getString("Title"),
-              obj.getString("Year"),
-              obj.getString("Runtime"),
-              obj.getString("Genre"),
-              obj.getString("Director"),
-              obj.getString("imdbRating")
-            };
-            for (String s : imdbInfos)
-              System.out.println(s);
+            button.getImdbInfos()[0] = obj.getString("Title");
+            button.getImdbInfos()[1] = obj.getString("Year");
+            button.getImdbInfos()[2] = obj.getString("Runtime");
+            button.getImdbInfos()[3] = obj.getString("Genre");
+            button.getImdbInfos()[4] = obj.getString("Director");
+            button.getImdbInfos()[5] = obj.getString("imdbRating");
+            button.getImdbInfos()[6] = string;
+            DatabaseSaver.save();
+            ListManager.reloadList(true);
             break;
           }
         }
       }
     } catch (MalformedURLException ex)
     {
-      Logger.getLogger(IMDbDownloader.class.getName()).log(Level.SEVERE, null, ex);
+      System.err.println(search);
     } catch (IOException ex)
     {
-      Logger.getLogger(IMDbDownloader.class.getName()).log(Level.SEVERE, null, ex);
+      System.err.println(search);
     }
+    return null;
   }
 }

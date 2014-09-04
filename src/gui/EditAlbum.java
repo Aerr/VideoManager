@@ -111,7 +111,7 @@ public class EditAlbum extends javax.swing.JDialog
       {
         super.setIcon(defaultIcon);
         if (defaultIcon != button.getIcon())
-        new DatabaseSaver().execute();
+        DatabaseSaver.save();
       }
     };
     jLabel5 = new javax.swing.JLabel();
@@ -404,7 +404,7 @@ public class EditAlbum extends javax.swing.JDialog
       if (returnStatus != RET_CANCEL)
       {
         ListManager.reloadList(true);
-        new DatabaseSaver().execute();
+        DatabaseSaver.save();
       }
       setVisible(false);
       dispose();

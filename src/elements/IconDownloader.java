@@ -15,6 +15,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.SwingWorker;
 import misc.Utils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class IconDownloader extends SwingWorker<Void, Void>
 {
@@ -66,8 +68,7 @@ public class IconDownloader extends SwingWorker<Void, Void>
   @Override
   protected Void doInBackground()
   {
-    BufferedImage newImage;
-    String[] split = null;
+    JSONArray arr = null;
     if (directURL != null)
       return directDownload();
 
@@ -90,32 +91,32 @@ public class IconDownloader extends SwingWorker<Void, Void>
       while ((line = reader.readLine()) != null)
         builder.append(line);
 
-      String imageUrl = builder.toString();
-      imageUrl = imageUrl.substring(imageUrl.indexOf(start) + start.length());
-      split = imageUrl.split("\"url\":\"");
+      JSONObject obj = new JSONObject(builder.toString());
+      arr = obj.getJSONObject("responseData").getJSONArray("results");
 
     } catch (IOException ex)
     {
       Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, ex);
     }
 
-    for (String string : split)
-    {
-      try
+    BufferedImage newImage;
+    if (arr != null)
+      for (int i = 0; i < arr.length(); i++)
       {
-        newImage = ImageIO.read(new URL(string.substring(0, string.indexOf(end))));
-      } catch (IOException e)
-      {
-        continue;
+        String string = arr.getJSONObject(i).getString("url");
+        try
+        {
+          newImage = ImageIO.read(new URL(string));
+        } catch (IOException ex)
+        {
+          Logger.getLogger(IconDownloader.class.getName()).log(Level.SEVERE, null, ex);
+          continue;
+        }
+
+        BufferedImage image = transform(newImage);
+        button.setImage(image);
+        return null;
       }
-
-      BufferedImage image = transform(newImage);
-
-
-      button.setImage(image);
-
-      return null;
-    }
 
     button.setIcon(Utils.getUnknownIcon());
 

@@ -51,7 +51,7 @@ public abstract class CAbstractAction extends AbstractAction
     JTable table = (source.getClass() == JTable.class) ? (JTable) source : null;
     actionPerformed(table);
 
-    new DatabaseSaver().execute();
+    DatabaseSaver.save();
 
     if (table == null)
       return;

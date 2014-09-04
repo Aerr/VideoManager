@@ -193,7 +193,7 @@ public final class Gui extends JFrame
     FileWalker.getInstance().removeUnexistingEntries();
     FileWalker.getInstance().getFiles(location.getPath());
     ListManager.searchBarUpdate();
-    new DatabaseSaver().execute();
+    DatabaseSaver.save();
   }
 
   private void shutdownHook()
